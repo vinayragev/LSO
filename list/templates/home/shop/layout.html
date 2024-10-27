@@ -1,0 +1,138 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>{% block title %}{% endblock %}</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'bootstrap' %}/assets/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static 'font-awesome-4.7.0/css/font-awesome.min.css' %}" rel="stylesheet">
+    
+
+
+
+    <!-- Custom styles for this template -->
+    <link href="{% static 'bootstrap' %}/header/header.css" rel="stylesheet">
+    <script src="{% static 'js/jquery.min.js' %}" rel="stylesheet"></script>
+    <script src="{% static 'js/all.js' %}" rel="stylesheet"></script>
+    <script type="text/javascript">
+        STATIC_URL = '{% static '' %}';
+        csrfmiddlewaretoken = '{{csrf_token}}';
+        uploader_files = []
+    </script>
+</head>
+<body style="background-color: #f1f5f9 !important;">
+<main>
+    <div class="container-fluid">
+        <header class="py-3 mb-3 border-bottom">
+            <div class="row">
+                <div class="col-md-1">
+                    <a href="/search">
+                    Brand
+                    </a>
+                </div>
+                <div class="col-md-10">
+                    <form class="w-100 me-3 header-form" action="\search">
+                        <div class="input-group mb-2">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <div class="">
+                                        <select class="form-select" name="country" required>
+                                            <option>India</option>
+                                            <option>Russia</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <!-- <div class="input-group-prepend">
+                                    <div style="width: 105px;">
+                                        <input type="text" class="form-control" placeholder="Pincode" name="pincode">
+                                    </div>
+                                </div> -->
+                                <input type="search" name="search" class="form-control" placeholder="Search..." aria-label="Search">
+                                <button class="input-group-text" style="height: 38px;">
+                                    <i class="fa fa-search" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-1" >
+                    <div class="d-flex align-items-center" style="float: right;">
+                        <div class="flex-shrink-0 dropdown">
+                            <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle user_name" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
+                            </a>
+                            <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
+                                <li><a class="dropdown-item" href="#">New project...</a></li>
+                                <li><a class="dropdown-item" href="#">Settings</a></li>
+                                <li><a class="dropdown-item" href="/profile">Profile</a></li>
+                                <li><a class="dropdown-item" href="/profile/edit">Profile Edit</a></li>
+                                <li><a class="dropdown-item" href="#">Sign out</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: center;">
+            </div>
+        </header>
+        {% block main %}
+        {% endblock %}
+    </div>
+</main>
+<footer class="container py-5">
+      <div class="row">
+        <div class="col-12 col-md">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="d-block mb-2"><circle cx="12" cy="12" r="10"></circle><line x1="14.31" y1="8" x2="20.05" y2="17.94"></line><line x1="9.69" y1="8" x2="21.17" y2="8"></line><line x1="7.38" y1="12" x2="13.12" y2="2.06"></line><line x1="9.69" y1="16" x2="3.95" y2="6.06"></line><line x1="14.31" y1="16" x2="2.83" y2="16"></line><line x1="16.62" y1="12" x2="10.88" y2="21.94"></line></svg>
+          <small class="d-block mb-3 text-muted">&copy; 2017-2018</small>
+        </div>
+        <div class="col-6 col-md">
+          <h5>Features</h5>
+          <ul class="list-unstyled text-small">
+            <li><a class="text-muted" href="#">Cool stuff</a></li>
+            <li><a class="text-muted" href="#">Random feature</a></li>
+            <li><a class="text-muted" href="#">Team feature</a></li>
+            <li><a class="text-muted" href="#">Stuff for developers</a></li>
+            <li><a class="text-muted" href="#">Another one</a></li>
+            <li><a class="text-muted" href="#">Last time</a></li>
+          </ul>
+        </div>
+        <div class="col-6 col-md">
+          <h5>Resources</h5>
+          <ul class="list-unstyled text-small">
+            <li><a class="text-muted" href="#">Resource</a></li>
+            <li><a class="text-muted" href="#">Resource name</a></li>
+            <li><a class="text-muted" href="#">Another resource</a></li>
+            <li><a class="text-muted" href="#">Final resource</a></li>
+          </ul>
+        </div>
+        <div class="col-6 col-md">
+          <h5>Resources</h5>
+          <ul class="list-unstyled text-small">
+            <li><a class="text-muted" href="#">Business</a></li>
+            <li><a class="text-muted" href="#">Education</a></li>
+            <li><a class="text-muted" href="#">Government</a></li>
+            <li><a class="text-muted" href="#">Gaming</a></li>
+          </ul>
+        </div>
+        <div class="col-6 col-md">
+          <h5>About</h5>
+          <ul class="list-unstyled text-small">
+            <li><a class="text-muted" href="#">Team</a></li>
+            <li><a class="text-muted" href="#">Locations</a></li>
+            <li><a class="text-muted" href="#">Privacy</a></li>
+            <li><a class="text-muted" href="#">Terms</a></li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+    <script src="{% static 'bootstrap' %}/assets/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript">
+        $('[name="pincode"]').val(getCookie('pincode'))
+        $('[name="search"]').val(getCookie('search'))
+        $('.user_name').html(localStorage['userDetail_name'])
+    </script>
+</body>
+</html>

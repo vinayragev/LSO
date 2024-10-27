@@ -1,0 +1,66 @@
+{% extends "admin/layout.html" %}
+{% block title %}Edit User{% endblock %}
+
+{% block main %}
+
+<div class="row mb-6">
+	<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+		<div class="card">
+			<div class="tab-content p-4" id="pills-tabContent-table">
+				<form class="needs-validation" method="POST">
+					{% include 'admin/user/form.html' %}
+					<button type="submit" class="btn btn-primary cat-submit-button submit-button"></button>
+					<input type="hidden" name="user_id" value="{{user_id}}">
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+    csrfmiddlewaretoken = '{{ csrf_token }}'
+    $('.needs-validation').submit(function (e) {
+    	e.preventDefault()
+    	data = {
+    		TYPE     : 'UPDATE_USER',
+	    	_id      : $('[name="name"]').val(),
+	    	name     : $('[name="name"]').val(),
+	    	bio      : $('[name="bio"]').val(),
+	    	_id      : $('[name="user_id"]').val(),
+	    	active   : $('[name="active"]').val()
+	    }
+		custom_AJAX({
+			TYPE:"POST",
+			URL: location.origin+'/api/admin/user/edit',
+			DATA:data,
+			SUCCESS:function (response) {
+				if (response.url) {
+					$('.ajax-msg').html(response.message).attr('class','btn btn-'+response.type)
+				}
+			}
+		});
+    })
+	custom_AJAX({
+		TYPE:"POST",
+		URL: location.origin+'/api/admin/user/form',
+		DATA:{user_id:'{{user_id}}',TYPE:"GET_USER"},
+		SUCCESS:function (response) {
+			form_text = response.FORM_TEXT.label
+			$('.step-anchor').show().prepend('<li class="done"><a class="arrow-link" href="{{ url_label_list }}">'+response.FORM_TEXT.page_heading+'</a></li>')
+			$('.page-heading').html(response.FORM_TEXT.heading['edit'][0])
+			$('.cat-submit-button').html(response.FORM_TEXT.btn['edit'][0])
+			form_text_keys = Object.keys(form_text)
+			for (var i = 0; i < form_text_keys.length; i++) {
+				$('[name="'+form_text_keys[i]+'"]').attr('placeholder',form_text[form_text_keys[i]])
+				$('.label-'+form_text_keys[i]+'').html(form_text[form_text_keys[i]])
+			}
+			$('[name="user_id"]').val(response.user[0]._id.$oid)
+			$('[name="name"]').val(response.user[0].name)
+			$('[name="email"]').val(response.user[0].email)
+			$('[name="bio"]').val(response.user[0].bio)
+			$('[name="active"]').val(response.user[0].active)
+		}		
+	})
+
+</script>
+{% endblock %}

@@ -1,0 +1,27 @@
+<div class="row">
+	<div class="col-md-6 mb-3">
+		<label class="col-sm-4 col-form-label form-label label-name"></label>
+		<input type="text" class="form-control" name="name">
+	</div>
+	<div class="col-md-6 mb-3">
+		<label class="col-sm-4 col-form-label form-label label-email"></label>
+		<input type="email" class="form-control" name="email" disabled>
+	</div>
+	<div class="col-md-12 mb-3">
+		<label class="col-sm-4 col-form-label form-label label-bio"></label>
+		<textarea type="email" class="form-control" name="bio"></textarea>
+	</div>
+	<div class="col-md-3 mb-3">
+		<label class="col-sm-4 col-form-label form-label label-active"></label>
+		<select class="form-select" name="active">
+			<option value="1">Active</option>
+			<option value="0">Not Active</option>
+		</select>
+	</div>
+</div>
+<div class="mb-3 row ajax-message-div" style="display: None;">
+	<div class="alert alert-success alert-dismissible fade show" role="alert">
+		<span class="ajax-message"></span>
+		<span class="btn-close" onclick="$('.ajax-message-div').hide()" aria-label="Close"></span>
+	</div>
+</div>

@@ -1,0 +1,114 @@
+{% extends "admin/layout.html" %}
+{% block title %}Order Details{% endblock %}
+
+{% load static %}
+
+{% block main %}
+        <div class="py-6" style="margin-bottom:24px;">
+          <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-12 mb-6">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Order</h4>
+                  <div class="row">
+                    <div class="col-md-4">
+                      <h5>User Name</h5>
+                      <p class="user_name"></p>
+                    </div>
+                    <div class="col-md-4">
+                      <h5>Order Genrated Time</h5>
+                      <p class="order_genrated_time"></p>
+                    </div>
+                    <div class="col-md-4">
+                      <h5>Order Status</h5>
+                      <input type="hidden" name="order_id">
+                      <select name="order_status" class="form-select"></select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="py-6" >
+          <!-- <div class="row"> -->
+            <!-- <div class="col-xl-12 col-lg-12 col-md-12 col-12 mb-6"> -->
+                  <div class="row cart_order"></div>
+            <!-- </div> -->
+          <!-- </div> -->
+        </div>
+        <div style="display: none;" id="card_order_shop">
+        	<div class="col-md-3 mb-3">
+        		<div class="card">
+        			<div class="card-body">
+        				<div class="text-center">
+        					<img style="height: 200px;max-width: 100%;" data-src="IMG_SRC" alt="Card image cap">
+        				</div>
+        				<h5 class="card-title">PRODUCT_NAME</h5>
+        				<p class="card-text">PRODUCT_MANUFACTURER</p>
+        				<p class="card-text"><span class="btn btn-sm btn-light">CURRENCY SHOP_PRODUCT_PRICE | QTY_TYPE_VALUE</span></p>
+        				<p class="card-text"><span class="btn btn-sm btn-light">CART_QTY QTY</span></p>
+        			</div>
+        		</div>
+        	</div>
+        </div>
+
+<script type="text/javascript">
+	custom_AJAX({
+		TYPE:"POST",
+		URL: location.origin+'/api/admin/order/view',
+		DATA:{TYPE:"GET_ORDER_DETAIL",order_id:input_GET('order_id')},
+		SUCCESS:function (response) {
+			shop = response.order[0].shop[0]
+			user = response.order[0].user[0]
+			cart = response.order[0].cart
+			option = response.option
+			for (var i = 0; i < option.length; i++) {
+				$('[name="'+option[i]['select_name']+'"]').append('<option value="'+option[i]['option_value']+'">'+option[i]['option_name']+'</option>')
+			}
+			$('.user_name').html(user['name'])
+			$('[name="order_status"]').val(response.order[0]['order_status'][0]['option_value'])
+			$('[name="order_id"]').val(response.order[0]['_id']['$oid'])
+			$('.order_genrated_time').html(get_time(response.order[0]['created_at']['$date']))
+			$('.step-anchor').show()
+			$('.cart_order').html('')
+			// for (var i = 0; i < $('.page-heading').length; i++) {
+				$('.page-heading').eq(0).html(response.LANG_TEXT.page_heading)
+			// }
+			for (var i = 1; i < $('.table-responsive').find('th').length; i++) {
+				$('.table-responsive').find('th').eq(i).html(response.LANG_TEXT.th[i-1])
+			}
+			listing = response.order
+			for (var i = 0; i < cart.length; i++) {
+				HTML = {
+					'data-src="IMG_SRC"'  : 'src="'+get_img_src(cart[i]['product_photo'][0]['file_url'])+'"',
+					PRODUCT_NAME          : cart[i]['product'][0]['product_name'],
+					CURRENCY              : cart[i]['product_price'][0]['currency'],
+					SHOP_PRODUCT_PRICE    : toLocaleString(cart[i]['product_price'][0]['final_amount']),
+					CART_QTY              : toLocaleString(cart[i]['qty']),
+				}
+				if (cart[i]['product'][0]['product']) {
+
+					HTML['PRODUCT_MANUFACTURER']  = cart[i]['product'][0]['product_manufacturer'];
+					HTML['QTY_TYPE_VALUE']        = toLocaleString(cart[i]['product'][0]['product_qty'])+' '+cart[i]['product'][0]['qty_type'][0]['option_name'];
+
+				}else{
+					HTML['PRODUCT_MANUFACTURER']  = '';
+					HTML['QTY_TYPE_VALUE']        = '';
+
+				}
+				$('.cart_order').append(replace_HTML($('#card_order_shop').html(),HTML))
+			}
+		}
+	})
+	$('[name="order_status"]').change(function () {
+		custom_AJAX({
+			TYPE:"POST",
+			URL: location.origin+'/api/admin/order/change_status',
+			DATA:{TYPE:"UPDATE_STATUS",order_id:$('[name="order_id"]').val(),order_status:$(this).val()},
+			SUCCESS:function (response) {
+			}
+		})
+	})
+</script>
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends "admin/layout.html" %}
+{% block title %}Add Product{% endblock %}
+
+{% load static %}
+{% block main %}
+<link rel="stylesheet" type="text/css" href="{% static 'ajax-file-uploader/css/jquery.uploader.css' %}">
+<script type="text/javascript" src="{% static 'ajax-file-uploader/dist/jquery.uploader.min.js' %}"></script>
+
+
+<div class="row mb-6">
+	<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+		<div class="card">
+			<div class="tab-content p-4" id="pills-tabContent-table">
+				<form class="needs-validation" method="POST">
+					{% include 'admin/service/form.html' %}
+					<button type="submit" class="btn btn-primary cat-submit-button submit-button"></button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+{% load static %}
+
+<script type="text/javascript">
+	csrfmiddlewaretoken = '{{ csrf_token }}'
+	$('[name="category_id"]').val('{{category_id}}')
+	$('.needs-validation').submit(function (e) {
+		e.preventDefault()
+		data = {
+			TYPE                 : 'ADD_PRODUCT',
+			active               : $('[name="active"]').val(),
+			product_name         : $('[name="product_name"]').val(),
+			product_desc         : $('[name="product_desc"]').val(),
+    	product_photo        : $('[name="product_photo"]').val(),
+			category_id          : $('[name="category_id"]').val(),
+		}
+		custom_AJAX({
+			TYPE:"POST",
+			URL: location.origin+"/api/admin/service/add",
+			DATA:data,
+			SUCCESS:function (response) {
+				if (response.url) {
+					$('.ajax-msg').html(response.message).attr('class','btn btn-'+response.type)
+				}
+			}
+		});
+	})
+	custom_AJAX({
+		TYPE:"POST",
+		URL: location.origin+"/api/admin/service/form",
+		DATA:{category_id:'{{category_id}}',TYPE:"GET_DATA"},
+		SUCCESS:function (response) {
+			form_text = response.LANG_TEXT.label
+			$('.step-anchor').show().prepend('<li class="done"><a class="arrow-link" href="{{ url_product_list }}">'+response.LANG_TEXT.page_heading+'</a></li>')
+			$('.page-heading').html(response.LANG_TEXT.heading['add'][0])
+			$('.submit-button').html(response.LANG_TEXT.btn['add'][0])
+			form_text_keys = Object.keys(form_text)
+			for (var i = 0; i < form_text_keys.length; i++) {
+				$('[name="'+form_text_keys[i]+'"]').attr('placeholder',form_text[form_text_keys[i]])
+				$('.label-'+form_text_keys[i]+'').html(form_text[form_text_keys[i]])
+			}
+			for (var i = 0; i < response['option'].length; i++) {
+				$('[name="'+response['option'][i]['select_name']+'"]').append('<option value="'+response['option'][i]['option_value']+'">'+response['option'][i]['option_name']+'</option>')
+			}
+		}		
+	})
+</script>
+  <script type="text/javascript" src="{% static 'wysiwyg-editor-master/js/froala_editor.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'wysiwyg-editor-master/js/plugins/align.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'wysiwyg-editor-master/js/plugins/code_beautifier.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'wysiwyg-editor-master/js/plugins/code_view.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'wysiwyg-editor-master/js/plugins/draggable.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'wysiwyg-editor-master/js/plugins/image.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'wysiwyg-editor-master/js/plugins/image_manager.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'wysiwyg-editor-master/js/plugins/link.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'wysiwyg-editor-master/js/plugins/lists.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'wysiwyg-editor-master/js/plugins/paragraph_format.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'wysiwyg-editor-master/js/plugins/paragraph_style.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'wysiwyg-editor-master/js/plugins/table.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'wysiwyg-editor-master/js/plugins/video.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'wysiwyg-editor-master/js/plugins/url.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'wysiwyg-editor-master/js/plugins/entities.min.js' %}"></script>
+
+  <script>
+    (function () {
+      const editorInstance = new FroalaEditor('#edit', {
+        enter: FroalaEditor.ENTER_P,
+        placeholderText: null,
+        events: {
+          initialized: function () {
+            const editor = this
+            this.el.closest('form').addEventListener('submit', function (e) {
+              console.log(editor.$oel.val())
+              e.preventDefault()
+            })
+          }
+        }
+      })
+    })()
+  </script>
+{% endblock %}

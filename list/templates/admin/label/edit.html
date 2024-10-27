@@ -1,0 +1,76 @@
+{% extends "admin/layout.html" %}
+{% block title %}Edit Label{% endblock %}
+
+{% block main %}
+
+<div class="row mb-6">
+	<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+		<div class="card">
+			<div class="tab-content p-4" id="pills-tabContent-table">
+				<form class="needs-validation" method="POST">
+				  {% include 'admin/label/form.html' %}
+					<button type="submit" class="btn btn-primary cat-submit-button submit-button"></button>
+          <input type="hidden" name="label_id" value="{{label_id}}">
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<script type="text/javascript">
+    csrfmiddlewaretoken = '{{ csrf_token }}'
+    $('.needs-validation').submit(function (e) {
+    	e.preventDefault()
+    	data = {
+    		TYPE          : 'UPDATE_LABEL',
+	    	label_id      : $('[name="label_id"]').val(),
+	    	page_name     : $('[name="page_name"]').val(),
+	    	language      : $('[name="language"]').val(),
+	    	label         : $('[name="label"]').val(),
+	    	active        : $('[name="active"]').val()
+	    }
+
+
+		custom_AJAX({
+			TYPE:"POST",
+		URL: location.origin+'/api/admin/label/edit',
+			DATA:data,
+			SUCCESS:function (response) {
+				if (response.url) {
+					$('.ajax-msg').html(response.message).attr('class','btn btn-'+response.type)
+				}
+			}
+		});
+    })
+
+$('[name="label"]').change(function () {
+	let json = JSON.parse($(this).val())
+	json = JSON.stringify(json, null, 4)
+	$(this).val(json)
+})
+
+	custom_AJAX({
+		TYPE:"POST",
+		URL: location.origin+'/api/admin/label/form',
+		DATA:{label_id:'{{label_id}}',TYPE:"GET_LABEL"},
+		SUCCESS:function (response) {
+			form_text = response.LANG_TEXT.label
+			$('.step-anchor').show().prepend('<li class="done"><a class="arrow-link" href="{{ url_label_list }}">'+response.LANG_TEXT.page_heading+'</a></li>')
+			$('.page-heading').html(response.LANG_TEXT.heading['edit'][0])
+			$('.cat-submit-button').html(response.LANG_TEXT.btn['edit'][0])
+			form_text_keys = Object.keys(form_text)
+			for (var i = 0; i < form_text_keys.length; i++) {
+				$('[name="'+form_text_keys[i]+'"]').attr('placeholder',form_text[form_text_keys[i]])
+				$('.label-'+form_text_keys[i]+'').html(form_text[form_text_keys[i]])
+			}
+			$('[name="label_id"]').val(response.label[0]._id.$oid)
+			$('[name="page_name"]').val(response.label[0].page_name)
+			$('[name="active"]').val(response.label[0].active)
+			$('[name="language"]').val(response.label[0].language)
+			$('[name="label"]').val(JSON.stringify(response.label[0].label, null, 4))
+		}		
+	})
+
+</script>
+{% endblock %}

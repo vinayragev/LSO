@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+  <head lang="en">
+    <title>Kømpletr - JS autocomplete</title>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!--[if IE]>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <![endif]-->
+
+    <link href="css/kompletr.demo.min.css" rel="stylesheet" type="text/css" media="screen" />
+    <script type="module" src="./js/kompletr.min.js"></script>
+  </head>
+  
+  <body>
+   
+    
+    
+    <div id="searcher" class="form--search">
+      <input
+        type="text"
+        name="auto-complete"
+        id="auto-complete"
+        autocomplete="off"
+        placeholder="Enter a city name ..."
+        value="" />
+    </div>
+    <script type="text/javascript">
+      function ready(fn) {
+        if (document.readyState !== 'loading') {
+          fn();
+          return;
+        }
+        document.addEventListener('DOMContentLoaded', fn);
+      };
+    
+      ready(() => {
+        const input = document.getElementById('auto-complete');
+  
+        const headers = new Headers();
+        headers.append('content-type', 'application/x-www-form-urlencoded');
+        headers.append('method', 'GET');
+          
+        fetch(`./files/data.json`, headers)
+          .then(result => result.json())
+          .then(data => {
+            kompletr({
+              input,
+              data,
+              options: {
+                animation: {
+                  type: 'slideDown',
+                  duration: 1000
+                },
+                theme: 'dark',  
+                fieldsToDisplay: [
+                  'Name',
+                  'CountryCode',
+                  'Population'
+                ],
+                maxResults: 5,
+                propToMapAsValue: 'Name',
+                startQueriyngFromChar: 2,
+                filterOn: 'prefix',
+                // cache: 50000
+              },
+              /*onKeyup: async function (value, done) {
+                console.log('cb.onKeyup ', value);
+                console.log('I\'m doing scrappy stuffs with the data!');
+                const result = await fetch(`http://localhost:3000/api?q=${value}`, headers);
+                const d = await result.json();
+                console.log('DATA', d)
+                // data = ['string', 'string', 'string'];
+                done(d);
+              },*/
+              onSelect: (selected) => {
+                console.log('cb.onSelect', selected);
+              },
+              onError: (error) => {
+                console.log('cb.onError ', error);
+              },
+            });
+          })
+          .catch(e => {
+            console.log(e);
+          });
+      });
+    </script>
+  </body>
+</html>

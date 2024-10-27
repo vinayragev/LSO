@@ -1,0 +1,121 @@
+{% load static %}
+  <link rel="stylesheet" href="{% static 'wysiwyg-editor-master/css/froala_editor.css' %}">
+  <link rel="stylesheet" href="{% static 'wysiwyg-editor-master/css/froala_style.css' %}">
+  <link rel="stylesheet" href="{% static 'wysiwyg-editor-master/css/plugins/code_view.css' %}">
+  <link rel="stylesheet" href="{% static 'wysiwyg-editor-master/css/plugins/image_manager.css' %}">
+  <link rel="stylesheet" href="{% static 'wysiwyg-editor-master/css/plugins/image.css' %}">
+  <link rel="stylesheet" href="{% static 'wysiwyg-editor-master/css/plugins/table.css' %}">
+  <link rel="stylesheet" href="{% static 'wysiwyg-editor-master/css/plugins/video.css' %}">
+
+  
+<div class="row">
+  	<div class="col-md-6 mb-3">
+  		<label class="label-category_id"></label>
+  		<input list="categorys" class="form-select" autocomplete="off" id="input-datalist" name="category_id">
+  		<datalist id="categorys">
+  		</datalist>
+  	</div>
+  	<div class="col-md-6 mb-3">
+  		<label class="label-product_qty"></label>
+  		<div class="input-group mb-3">
+  			<div class="input-group-prepend">
+  				<div class="">
+  					<select class="form-select" name="product_qty_type" required></select>
+  				</div>
+  			</div>
+  			<input type="text" class="form-control localstring" name="product_qty" required>
+  		</div>
+  	</div>
+  	<div class="col-md-4 mb-3">
+  		<label class="label-product_name"></label>
+  		<input type="text" class="form-control" required="" name="product_name">
+  	</div>
+  	<div class="col-md-4 mb-3">
+  		<label class="label-product_code_name"></label>
+  		<input type="text" class="form-control" required="" name="product_code_name">
+  	</div>
+  	<div class="col-md-4 mb-3">
+  		<label class="label-product_manufacturer"></label>
+  		<input type="text" class="form-control" required="" name="product_manufacturer">
+  	</div>
+  	<div class="col-md-12 mb-3">
+  		<label class="label-product_desc"></label>
+  		<textarea type="text" id='edit' class="form-control" required="" name="product_desc"></textarea>
+  	</div>
+  	<div class="col-md-12 mb-3">
+  		<label class="label-product_photo"></label>
+  		<div style="display:none">
+  			<input type="file" class="product_photo" name="">
+  		</div>
+  		<div class="jquery-uploader">
+  			<div class="jquery-uploader-preview-container">
+  				<div class="jquery-uploader-select-card">
+  					<div class="jquery-uploader-select">
+  						<div onclick="$('.product_photo').eq(0).click()" class="upload-button">
+  							<i class="fa fa-plus"></i><br>
+  							<a >Upload</a>
+  						</div>
+  					</div>
+  				</div>
+  			</div>
+  		</div>
+  	</div>
+  	<div class="col-md-3 mb-3">
+  		<label class="label-active"></label>
+  		<select class="form-select" name="active">
+  			<option value="1">Active</option>
+  			<option value="0">Not Active</option>
+  		</select>
+  	</div>
+  	<div class="col-md-12 mb-3 ajax-message-div" style="display: None;">
+  		<div class="alert alert-success alert-dismissible fade show" role="alert">
+  			<span class="ajax-message"></span>
+  			<span class="btn-close" onclick="$('.ajax-message-div').hide()" aria-label="Close"></span>
+  		</div>
+  	</div>
+  </div>
+	<input class="form-control" type="hidden" name="photo">
+	<input type="hidden" name="product_photo" value="">
+<script type="text/javascript">
+	$('[type="file"]').change(function () {
+		_this = $(this)
+		data = {product_id:"{{product_id}}",TYPE:"UPLOAD_PRODUCT_PHOTO",product_photo:_this[0].files[0]}
+		custom_AJAX({
+			TYPE:"POST",
+			URL: location.origin+"/api/admin/file/upload",
+			DATA:data,
+			SUCCESS:function (response) {
+				if (response.file_name) {
+					$('.jquery-uploader-preview-container').prepend('<div class="jquery-uploader-card"><div class="jquery-uploader-preview-main"><div class="jquery-uploader-preview-action"><ul><li class="file-delete"><i class="fa fa-trash-o" onclick="$(\'.jquery-uploader-card\').remove()" data-id=""></i></li></ul></div><img alt="preview"  class="files_img" src="'+get_img_src(response.file_name)+'"></div></div>')
+					$('[name="product_photo"]').val($('[name="product_photo"]').val()+','+response.file_name)
+				}
+			}
+		},true);
+	})
+	function delete_product_photo(_this) {
+		data = {TYPE:"DELETE_PHOTO",product_photo_id:_this.attr('data-img-id'),product_id:$('[name="product_id"]').val()}
+		file_url = _this.attr('data-img-id')
+		custom_AJAX({
+			TYPE:"POST",
+			URL: location.origin+"/api/admin/product/remove_photo",
+			DATA:data,
+			SUCCESS:function (response) {
+				_this.closest('.jquery-uploader-card').remove()
+			}
+		});
+	}
+	$('[name="category_id"]').keyup(function () {
+		custom_AJAX({
+			TYPE:"POST",
+			URL: location.origin+'/api/admin/category/search',
+			DATA:{search:$('[name="category_id"]').val().toLowerCase(),product_id:'{{product_id}}',TYPE:'GET_SEARCH_CATEGORY'},
+			SUCCESS:function (response) {
+				category_list = response.category
+				$('[id="categorys"]').html('')
+				for (var i = 0; i < category_list.length; i++) {
+					$('[id="categorys"]').append('<option value="'+category_list[i].category_name+'">'+category_list[i].category_name+'</option>')
+				}
+			}
+		})
+	});
+</script>

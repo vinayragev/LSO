@@ -1,0 +1,172 @@
+{% load static %}
+ <!-- Sidebar -->
+ <nav class="navbar-vertical navbar">
+    <div class="nav-scroller">
+        <!-- Brand logo -->
+        <a class="navbar-brand" href="/">
+            <img src="{% static 'assets/images/brand/logo/logo.svg' %}" alt="" />
+        </a>
+        <!-- Navbar nav -->
+        <ul class="navbar-nav flex-column" id="sideNavbar">
+            <li class="nav-item">
+                <a class="nav-link has-arrow" href="/admin/">
+                    <i data-feather="home" class="nav-icon icon-xs me-2"></i>  Dashboard
+                </a>
+            </li>
+            <!-- Nav item -->
+            <li class="nav-item">
+                <div class="navbar-heading">Layouts & Pages</div>
+            </li>
+            <!-- Nav item -->
+            {% if request.user.is_superuser %}
+            <li class="nav-item">
+                <a class="nav-link has-arrow" href="#!" data-bs-toggle="collapse" data-bs-target="#shopAdminPages" aria-expanded="false" aria-controls="shopAdminPages">
+                    <i
+                    data-feather="layers"
+                    class="nav-icon icon-xs me-2">
+                </i> Admin
+            </a>
+            <div id="shopAdminPages" class="collapse" data-bs-parent="#sideNavbar">
+                <ul class="nav flex-column">
+                   <li class="nav-item">
+                        <a class="nav-link has-arrow" href="#!" data-bs-toggle="collapse" data-bs-target="#navMenuLevelUser" aria-expanded="false" aria-controls="navMenuLevelUser">
+                            User
+                        </a>
+                        <div id="navMenuLevelUser" class="collapse" data-bs-parent="#navMenuLevel">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link " href="/admin/user/list">  List</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link has-arrow" href="#!" data-bs-toggle="collapse" data-bs-target="#navMenuLevelLabel" aria-expanded="false" aria-controls="navMenuLevelLabel">
+                            Label
+                        </a>
+                        <div id="navMenuLevelLabel" class="collapse" data-bs-parent="#navMenuLevel">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link " href="/admin/label/list">  List</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link " href="/admin/label/add">  Add</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                   <li class="nav-item">
+                        <a class="nav-link has-arrow" href="#!" data-bs-toggle="collapse" data-bs-target="#navMenuLevelCategory" aria-expanded="false" aria-controls="navMenuLevelCategory">
+                            Category
+                        </a>
+                        <div id="navMenuLevelCategory" class="collapse" data-bs-parent="#navMenuLevel">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link " href="/admin/category/list">  List</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link " href="/admin/category/add">  Add</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </li>
+        {% endif %}
+        <li class="nav-item">
+                <a class="nav-link has-arrow" href="#!" data-bs-toggle="collapse" data-bs-target="#shopPages" aria-expanded="false" aria-controls="shopPages">
+                    <i
+                    data-feather="layers"
+                    class="nav-icon icon-xs me-2">
+                </i> Shop
+            </a>
+            <div id="shopPages" class="collapse" data-bs-parent="#sideNavbar">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link has-arrow" href="#!" data-bs-toggle="collapse" data-bs-target="#navMenuLevelOrder" aria-expanded="false" aria-controls="navMenuLevelOrder">
+                            Shop Order
+                        </a>
+                        <div id="navMenuLevelOrder" class="collapse" data-bs-parent="#navMenuLevel">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link " href="/admin/order/list">  List</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <!-- <li class="nav-item">
+                        <a class="nav-link has-arrow" href="#!" data-bs-toggle="collapse" data-bs-target="#navMenuLevelstaff" aria-expanded="false" aria-controls="navMenuLevelstaff">
+                            Staff
+                        </a>
+                        <div id="navMenuLevelstaff" class="collapse" data-bs-parent="#navMenuLevel">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link " href="/admin/staff/list">  List</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li> -->
+                    <li class="nav-item">
+                        <a class="nav-link has-arrow" href="#!" data-bs-toggle="collapse" data-bs-target="#navMenuLevelService" aria-expanded="false" aria-controls="navMenuLevelService">
+                            Service
+                        </a>
+                        <div id="navMenuLevelService" class="collapse" data-bs-parent="#navMenuLevel">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link " href="/admin/service/list">  List</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link " href="/admin/service/add">  Add</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link has-arrow" href="#!" data-bs-toggle="collapse" data-bs-target="#navMenuLevelProduct" aria-expanded="false" aria-controls="navMenuLevelProduct">
+                            Product
+                        </a>
+                        <div id="navMenuLevelProduct" class="collapse" data-bs-parent="#navMenuLevel">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link " href="/admin/product/list">  List</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link " href="/admin/product/add">  Add</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link has-arrow" href="#!" data-bs-toggle="collapse" data-bs-target="#navMenuLevelShop" aria-expanded="false" aria-controls="navMenuLevelShop">
+                            Shop
+                        </a>
+                        <div id="navMenuLevelShop" class="collapse" data-bs-parent="#navMenuLevel">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link " href="/admin/shop/list">  List</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link " href="/admin/shop/add">  Add</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link has-arrow" href="#!" data-bs-toggle="collapse" data-bs-target="#navMenuLevelQuery" aria-expanded="false" aria-controls="navMenuLevelQuery">
+                            Query
+                        </a>
+                        <div id="navMenuLevelQuery" class="collapse" data-bs-parent="#navMenuLevel">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link " href="/admin/query/list">  List</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+</div>
+</nav>

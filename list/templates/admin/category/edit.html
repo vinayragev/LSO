@@ -1,0 +1,58 @@
+{% extends "admin/layout.html" %}
+
+{% load static %}
+{% block title %}Edit Category{% endblock %}
+{% block main %}
+<div class="row mb-6">
+	<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+		<div class="card">
+			<div class="tab-content p-4" id="pills-tabContent-table">
+				<form class="needs-validation" method="POST">
+					{% include 'admin/category/form.html' %}
+					<button type="submit" class="btn btn-primary cat-submit-button submit-button"></button>
+					<input type="hidden" name="category_id">
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<script type="text/javascript">
+    csrfmiddlewaretoken = '{{ csrf_token }}'
+    $('.needs-validation').submit(function (e) {
+    	e.preventDefault()
+		custom_AJAX({
+			TYPE:"POST",
+			URL: location.origin+'/api/admin/category/edit',
+			DATA:{TYPE:'UPDATE_CATEGORY',parent_id:$('[name="parent_id"]').val(),category_name:$('[name="category_name"]').val(),active:$('[name="active"]').val(),category_id:$('[name="category_id"]').val()},
+			SUCCESS:function (response) {
+				if (response.url) {
+					$('.ajax-msg').html(response.message).attr('class','btn btn-'+response.type)
+				}
+			}
+		});
+    })
+	custom_AJAX({
+		TYPE:"POST",
+		URL: location.origin+'/api/admin/category/form',
+		DATA:{category_id:'{{category_id}}',TYPE:"GET_CATEGORY"},
+		SUCCESS:function (response) {
+			LANG_TEXT = response.LANG_TEXT.label
+			$('.step-anchor').show().prepend('<li class="done"><a class="arrow-link" href="{{ url_category_list }}">'+response.LANG_TEXT.page_heading+'</a></li>')
+			$('.page-heading').html(response.LANG_TEXT.heading['edit'][0])
+			$('.cat-submit-button').html(response.LANG_TEXT.btn['edit'][0])
+			LANG_TEXT_keys = Object.keys(LANG_TEXT)
+			for (var i = 0; i < LANG_TEXT_keys.length; i++) {
+				$('[name="'+LANG_TEXT_keys[i]+'"]').attr('placeholder',LANG_TEXT[LANG_TEXT_keys[i]])
+				$('.label-'+LANG_TEXT_keys[i]+'').html(LANG_TEXT[LANG_TEXT_keys[i]])
+			}
+			$('[name="category_id"]').val(response.category[0]._id.$oid)
+			$('[name="category_name"]').val(response.category[0].category_name)
+			$('[name="active"]').val(response.category[0].active)
+			$('[name="parent_id"]').val(response.category[0].parent_id.$oid)
+			$('[list="parent_id"]').val(response.category[0].parent[0].category_name)
+		}		
+	})
+</script>
+{% endblock %}

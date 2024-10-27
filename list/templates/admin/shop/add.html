@@ -1,0 +1,117 @@
+{% extends "admin/layout.html" %}
+
+{% block title %}Add Shop{% endblock %}
+{% load static %}
+{% block main %}
+<link rel="stylesheet" type="text/css" href="{% static 'ajax-file-uploader/css/jquery.uploader.css' %}">
+<script type="text/javascript" src="{% static 'ajax-file-uploader/dist/jquery.uploader.min.js' %}"></script>
+
+<div class="row mb-6">
+	<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+		<div class="card">
+			<div class="tab-content p-4" id="pills-tabContent-table">
+				<form class="needs-validation" method="POST">
+					{% include 'admin/shop/form.html' %}
+					<button type="submit" class="btn btn-primary cat-submit-button submit-button"></button>
+      		<input type="hidden" name="shop_id" value="{{ shop_id }}">
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<script type="text/javascript">
+	cur_location = false
+	$('.open_time').val('10:00:00')
+	$('.close_time').val('22:00:00')
+	custom_AJAX({
+		TYPE:"POST",
+		URL: location.origin+'/api/admin/shop/form',
+		DATA:{TYPE:"GET_FORM_TEXT"},
+		SUCCESS:function (response) {
+			form_text = response.LANG_TEXT.label
+			// form_text_keys = Object.keys(form_text)
+			// for (var i = 0; i < form_text_keys.length; i++) {
+			// 	$('[name="'+form_text_keys[i]+'"]').attr('placeholder',form_text[form_text_keys[i]])
+			// 	$('.label-'+form_text_keys[i]+'').html(form_text[form_text_keys[i]])
+			// }
+			$('.step-anchor').show().prepend('<li class="done"><a class="arrow-link" href="{{ url_shop_list }}">'+response.LANG_TEXT.page_heading+'</a></li>')
+			$('.page-heading').html(response.LANG_TEXT.heading['add'][0])
+			$('.cat-submit-button').html(response.LANG_TEXT.btn['add'][0])
+			$('.page-heading').html(response['LANG_TEXT']['heading']['add'][0])
+			country = response.country
+			for (var i = 0; i < country.length; i++) {
+				$('[name="country"]').append('<option value="'+country[i].country_name+'">'+country[i].country_name+'</option>')
+			}
+			form_text_keys = Object.keys(form_text)
+			for (var i = 0; i < response['LANG_TEXT']['form_heading'].length; i++) {
+				$('.form-heading').eq(i).html(response['LANG_TEXT']['form_heading'][i]).closest('.row').find('.mb-1').html(response['LANG_TEXT']['form_heading'][i])
+			}
+			for (var i = 0; i < form_text_keys.length; i++) {
+				$('[name="'+form_text_keys[i]+'"]').attr('placeholder',form_text[form_text_keys[i]])
+				$('.label-'+form_text_keys[i]+'').html(form_text[form_text_keys[i]])
+			}
+		}		
+	})
+	$('.needs-validation').submit(function (e) {
+    	$('.open_time').change()
+    	$('.close_time').change()
+		e.preventDefault()
+	  	close_time = JSON.parse($('[name="close_time"]').val())
+	  	open_time  = JSON.parse($('[name="open_time"]').val())
+	  	time = []
+	  	for (var i = 0; i < open_time.length; i++) {
+	  		time.push([i,open_time[i],close_time[i]])
+	  	}
+		data = {
+			"TYPE"             :'ADD_SHOP',
+			"shop_name"        :$('[name="shop_name"]').val(),
+			"owner_full_name"  :$('[name="owner_full_name"]').val(),
+			"currency"         :$('[name="currency"]').val(),
+			"shop_type"         :$('[name="shop_type"]').val(),
+			"mobile"           :$('[name="mobile"]').val(),
+			"email"            :$('[name="email"]').val(),
+			"country"          :$('[name="country"]').val(),
+			"pincode"          :$('[name="pincode"]').val(),
+			"state"            :$('[name="state"]').val(),
+			"city"             :$('[name="city"]').val(),
+			"full_address"     :$('[name="full_address"]').val(),
+			"time"             :JSON.stringify(time),
+			"active"           :$('[name="active"]').val(),
+			"open_time"        :$('[name="open_time"]').val(),
+			"close_time"       :$('[name="close_time"]').val(),
+			"latitude"         :$('[name="latitude"]').val(),
+			"longitude"        :$('[name="longitude"]').val(),
+			"open_since"       :$('[name="open_since"]').val(),
+			"info"             :$('[name="info"]').val(),
+			"banner"           :$('[name="banner"]').val(),
+			"photo"            :$('[name="photo"]').val(),
+		}
+		custom_AJAX({
+			TYPE:"POST",
+			URL: location.origin+"/api/admin/shop/add",
+			DATA: data,
+			SUCCESS:function (response) {
+				if (response.url) {
+					$('.ajax-msg').html(response.message).attr('class','btn btn-'+response.type)
+				}
+			}
+		});
+	})
+	$('.open_time').change(function () {
+		list = []
+		$('.open_time').each(function () {
+			list.push($(this).val())
+		})
+		$('[name="open_time"]').val(JSON.stringify(list))
+	})
+	$('.close_time').change(function () {
+		list = []
+		$('.close_time').each(function () {
+			list.push($(this).val())
+		})
+		$('[name="close_time"]').val(JSON.stringify(list))
+	})
+</script>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends "preLogin/new_layout.html" %}
+
+{% block main %}
+
+<form method="POST" id="sign_up">
+  <!-- Email -->
+  <div class="mb-3">
+    <label for="name" class="form-label">Name</label>
+    <input type="name" id="name" class="form-control" name="name" placeholder="Full Name" required="">
+  </div>
+  <div class="mb-3">
+    <label for="email" class="form-label">Email</label>
+    <input type="email" id="email" class="form-control" name="email" placeholder="Email address here" required="">
+  </div>
+  <!-- Password -->
+  <div class="mb-3">
+    <label for="password" class="form-label">Password</label>
+    <input type="password" id="password" class="form-control" name="password" placeholder="**************" required="">
+  </div>
+  <!-- Password -->
+  <div class="mb-3">
+    <label for="confirm-password" class="form-label">Confirm
+    Password</label>
+    <input type="password" id="confirm-password" class="form-control" name="password" placeholder="**************" required="">
+  </div>
+  <!-- Checkbox -->
+  <div class="mb-3">
+    <div class="form-check custom-checkbox">
+      <input type="checkbox" class="form-check-input" id="agreeCheck">
+      <label class="form-check-label" for="agreeCheck"><span
+        class="fs-5">I agree to the <a
+        href="terms-condition-page.html">Terms of
+      Service </a>and
+      <a href="terms-condition-page.html">Privacy Policy.</a></span></label>
+    </div>
+  </div>
+  <div>
+    <!-- Button -->
+    <div class="d-grid">
+      <button type="submit" class="btn btn-primary">
+        Create Free Account
+      </button>
+    </div>
+
+    <div class="d-md-flex justify-content-between mt-4">
+      <div class="mb-2 mb-md-0">
+        <a href="/signin" class="fs-5">Already member? Login</a>
+      </div>
+      <div>
+        <a href="forget-password.html" class="text-inherit
+        fs-5">Forgot your password?</a>
+      </div>
+    </div>
+  </div>
+    {% csrf_token %}
+</form>
+<script type="text/javascript">
+$('#sign_up').submit(function (e) {
+  e.preventDefault()
+    custom_AJAX({
+    TYPE:"POST",
+    URL: location.href,
+    DATA:{
+      "name"     : $('[name="name"]').val(),
+      "email"    : $('[name="email"]').val(),
+      "password" : $('[name="password"]').val(),
+      "password" : $('[name="password"]').val(),
+    },
+    SUCCESS:function (response) {
+    }
+  });
+
+})  
+</script>
+{% endblock %}

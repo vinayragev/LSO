@@ -1,0 +1,40 @@
+{% extends "preLogin/new_layout.html" %}
+
+{% block main %}
+
+<form method="POST">
+  <div class="mb-3">
+    <label for="email" class="form-label">Email</label>
+    <input type="text" id="email" class="form-control" name="email" placeholder="email" required="">
+  </div>
+  <div class="mb-3">
+    <label for="password" class="form-label">Password</label>
+    <input type="password" id="password" class="form-control" name="password" placeholder="**************" required="">
+  </div>
+  <div class="d-lg-flex justify-content-between align-items-center
+  mb-4">
+  <div class="form-check custom-checkbox">
+    <input type="checkbox" class="form-check-input" id="rememberme">
+    <label class="form-check-label" for="rememberme">Remember
+    me</label>
+  </div>
+</div>
+<div>
+  <div class="d-grid">
+    <button type="submit" class="btn btn-primary">Sign
+    in</button>
+  </div>
+  <div class="d-md-flex justify-content-between mt-4">
+    <div class="mb-2 mb-md-0">
+      <a href="/signup" class="fs-5">Create An
+      Account </a>
+    </div>
+    <div>
+      <a href="forget-password.html" class="text-inherit
+      fs-5">Forgot your password?</a>
+    </div>
+  </div>
+</div>
+{% csrf_token %}
+</form>
+{% endblock %}

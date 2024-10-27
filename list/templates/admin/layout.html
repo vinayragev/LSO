@@ -1,0 +1,209 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.84.0">
+    <title>Dashboard Template · Bootstrap v5.0</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/dashboard/">
+<link href="{% static 'font-awesome-4.7.0/css/font-awesome.min.css' %}" rel="stylesheet">
+
+<script type="text/javascript">
+  STATIC_URL = '{% static '' %}';
+  csrfmiddlewaretoken = '{{csrf_token}}';
+  uploader_files = []
+</script>    
+
+    <!-- Bootstrap core CSS -->
+<link href="{% static 'bootstrap' %}/assets/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+
+    
+    <!-- Custom styles for this template -->
+    <link href="{% static 'bootstrap/dashboard/dashboard.css' %}" rel="stylesheet">
+    <link href="{% static 'bootstrap/sidebars/sidebars.css' %}" rel="stylesheet">
+    <script type="text/javascript" src="{% static 'bootstrap/sidebars/sidebars.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/all.js' %}"></script>
+  </head>
+  <body class="bg-light">
+    
+
+
+    <header class="py-3 mb-3 border-bottom">
+      <div class="container-fluid d-grid gap-3 align-items-center" style="grid-template-columns: 1fr 2fr;">
+        <div class="dropdown">
+          <a href="#" class="d-flex align-items-center col-lg-4 mb-2 mb-lg-0 link-dark">
+            Brand
+          </a>
+        </div>
+
+        <div class="d-flex align-items-center">
+          <form class="w-100 me-3">
+            <input type="search" name="search" class="form-control" placeholder="Search..." aria-label="Search">
+          </form>
+
+          <div class="flex-shrink-0 dropdown">
+            <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
+              <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
+            </a>
+            <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
+              <li><a class="dropdown-item" href="#">New project...</a></li>
+              <li><a class="dropdown-item" href="#">Settings</a></li>
+              <li><a class="dropdown-item" href="#">Profile</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#">Sign out</a></li>
+            </ul>
+          </div>
+        </div>
+        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+          
+        </button>
+      </div>
+    </header>
+
+
+<div class="container-fluid">
+  <div class="row">
+    <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+      <div class="card">
+        <div class="card-body">
+        <div class="position-sticky pt-3">
+        <ul class="list-unstyled ps-0">
+          <li class="mb-1">
+            <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#shop-collapse" aria-expanded="false">
+              Shop
+            </button>
+            <div class="collapse" id="shop-collapse">
+              <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                <li><a href="/admin/shop/list" class="link-dark rounded">List</a></li>
+                <li><a href="/admin/shop/add" class="link-dark rounded">Add</a></li>
+                <li><a href="/admin/order/list" class="link-dark rounded">Orders</a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="mb-1">
+            <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#service-collapse" aria-expanded="false">
+              Service
+            </button>
+            <div class="collapse" id="service-collapse">
+              <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                <li><a href="/admin/service/list" class="link-dark rounded">List</a></li>
+                <li><a href="/admin/service/add" class="link-dark rounded">Add</a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="mb-1">
+            <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#product-collapse" aria-expanded="false">
+              Product
+            </button>
+            <div class="collapse" id="product-collapse">
+              <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                <li><a href="/admin/product/list" class="link-dark rounded">List</a></li>
+                <li><a href="/admin/product/add" class="link-dark rounded">Add</a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="mb-1">
+            <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#category-collapse" aria-expanded="false">
+              Category
+            </button>
+            <div class="collapse" id="category-collapse">
+              <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                <li><a href="/admin/category/list" class="link-dark rounded">List</a></li>
+                <li><a href="/admin/category/add" class="link-dark rounded">Add</a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="mb-1">
+            <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#label-collapse" aria-expanded="false">
+              label
+            </button>
+            <div class="collapse" id="label-collapse">
+              <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                <li><a href="/admin/label/list" class="link-dark rounded">List</a></li>
+                <li><a href="/admin/label/add" class="link-dark rounded">Add</a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="mb-1">
+            <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#user-collapse" aria-expanded="false">
+              user
+            </button>
+            <div class="collapse" id="user-collapse">
+              <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                <li><a href="/admin/user/list" class="link-dark rounded">List</a></li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="mb-1">
+            <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#query-collapse" aria-expanded="false">
+              Query
+            </button>
+            <div class="collapse" id="query-collapse">
+              <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                <li><a href="/admin/query/list" class="link-dark rounded">List</a></li>
+              </ul>
+            </div>
+          </li>
+
+
+          <li class="border-top my-3"></li>
+          <li class="mb-1">
+            <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#account-collapse" aria-expanded="false">
+              Account
+            </button>
+            <div class="collapse" id="account-collapse">
+              <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                <li><a href="#" class="link-dark rounded">New...</a></li>
+                <li><a href="#" class="link-dark rounded">Profile</a></li>
+                <li><a href="#" class="link-dark rounded">Settings</a></li>
+                <li><a href="#" class="link-dark rounded">Sign out</a></li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+        
+      </div>
+      </div>
+      </div>
+    </nav>
+
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+      <h2 class="page-heading"></h2>
+      <hr>
+      {% block main %}
+      {% endblock %}
+    </main>
+  </div>
+</div>
+
+
+    <script src="{% static 'bootstrap' %}/assets/dist/js/bootstrap.bundle.min.js"></script>
+
+      <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js" integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha" crossorigin="anonymous"></script>
+      <script src="{% static 'bootstrap/dashboard/dashboard.js' %}"></script>
+      <script src="{% static 'bootstrap/sidebars/sidebars.js' %}"></script>
+  </body>
+</html>

@@ -1,0 +1,91 @@
+{% extends "admin/layout.html" %}
+{% block title %}Add Product Price{% endblock %}
+
+{% load static %}
+{% block main %}
+<div class="row mb-6">
+	<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+		<div class="card">
+			<div class="tab-content p-4" id="pills-tabContent-table">
+				<form class="needs-validation" method="POST">
+					{% include 'admin/service_price/form.html' %}
+					<button type="submit" class="btn btn-primary cat-submit-button submit-button"></button>
+					<input type="hidden" name="TYPE" value="ADD_SHOP_PRODUCT">
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+<script type="text/javascript">
+    csrfmiddlewaretoken = '{{ csrf_token }}'
+    data = {TYPE:'GET_FORM_TEXT'}
+	data['product_id'] = input_GET('product_id')
+	custom_AJAX({
+		TYPE:"POST",
+		URL: location.origin+'/api/admin/service/price/form',
+		DATA:data,
+		SUCCESS:function (response) {
+			form_text = response.LANG_TEXT.label
+			$('.step-anchor').show().prepend('<li class="done"><a class="arrow-link" href="{{ url_price_list }}">'+response.LANG_TEXT.page_heading+'</a></li>')
+			$('.page-heading').html(response.LANG_TEXT.heading['add'][0])
+			$('.cat-submit-button').html(response.LANG_TEXT.btn['add'][0])
+			form_text_keys = Object.keys(response.LANG_TEXT.label)
+			for (var i = 0; i < form_text_keys.length; i++) {
+				$('[name="'+form_text_keys[i]+'"]').attr('placeholder',form_text[form_text_keys[i]])
+				$('.label-'+form_text_keys[i]+'').html(form_text[form_text_keys[i]])
+			}
+
+			for (var i = 0; i < response['option'].length; i++) {
+				$('[name="'+response['option'][i]['select_name']+'"]').append('<option value="'+response['option'][i]['option_value']+'">'+response['option'][i]['option_name']+'</option>')
+			}
+
+			for (var i = 0; i < response['LANG_TEXT']['form_heading'].length; i++) {
+				$('.form-heading').eq(i).html(response['LANG_TEXT']['form_heading'][i]).closest('.row').find('.mb-1').html(response['LANG_TEXT']['form_heading'][i])
+			}
+
+
+
+			$('[name="product_id"]').val(response['product'][0]['product_name'])
+
+
+
+			for (var i = 0; i < response.shop.length; i++) {
+				$('[name="shop_id"]').append('<option value="'+response.shop[i]['_id']['$oid']+'">'+response.shop[i]['shop_name']+'</option>')
+			}
+			if (response.product) {
+				$('[name="shop_product_product"]').val(response.product[0].product_name+' | '+response.product[0].product_manufacturer)
+			}
+		}
+	});
+    $('.needs-validation').submit(function (e) {
+    	e.preventDefault()
+    	data = {
+			"active"                      :$('[name="active"]').val(),
+			"shop_id"                     :$('[name="shop_id"]').val(),
+			"TYPE"                        :$('[name="TYPE"]').val(),
+			"shop_product_product"        :$('[name="shop_product_product"]').val(),
+			"product_id"                  :input_GET('product_id'),
+			"final_amount"                :parseInt($('[name="final_amount"]').val().replaceAll(',','')),
+			"discount_percentage"         :parseInt($('[name="discount_percentage"]').val().replaceAll(',','')),
+			"shop_product_msp"            :parseInt($('[name="shop_product_msp"]').val().replaceAll(',','')),
+			"shop_product_price"          :parseInt($('[name="shop_product_price"]').val().replaceAll(',','')),
+			"shop_product_tax"            :parseInt($('[name="shop_product_tax"]').val().replaceAll(',','')),
+			"shop_product_tax_percentage" :parseInt($('[name="shop_product_tax_percentage"]').val().replaceAll(',','')),
+		}
+		custom_AJAX({
+			TYPE:"POST",
+			URL: location.origin+'/api/admin/service/price/add',
+			DATA:data,
+			SUCCESS:function (response) {
+				if (response.url) {
+					$('.ajax-msg').html(response.message).attr('class','btn btn-'+response.type)
+				}
+			}
+		});
+    })
+
+</script>
+{% endblock %}

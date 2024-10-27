@@ -1,0 +1,97 @@
+{% extends "admin/layout.html" %}
+{% block title %}Edit Product Price{% endblock %}
+
+{% load static %}
+
+{% block main %}
+<div class="row mb-6">
+	<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+		<form class="needs-validation" method="POST">
+			<div class="card">
+				<div class="tab-content p-4" id="pills-tabContent-table">
+					{% include 'admin/service_price/form.html' %}
+					<button type="submit" class="btn btn-primary cat-submit-button submit-button"></button>
+					<input type="hidden" name="TYPE" value="ADD_SHOP_PRODUCT">
+					<input type="hidden" name="price_id" value="{{price_id}}">
+					<input type="hidden" name="TYPE" value="UPDATE_SHOP_PRODUCT">
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script type="text/javascript">
+    csrfmiddlewaretoken = '{{ csrf_token }}'
+	custom_AJAX({
+		TYPE:"POST",
+		URL: location.origin+'/api/admin/service/price/form',
+		DATA:{csrfmiddlewaretoken:'{{ csrf_token }}',price_id:'{{price_id}}',TYPE:'GET_SHOP_PRODUCT'},
+		SUCCESS:function (response) {
+			form_label = response.LANG_TEXT.label
+			form_label_keys = Object.keys(form_label)
+			$('.step-anchor').show().prepend('<li class="done"><a class="arrow-link" href="{{ url_price_list }}">'+response.LANG_TEXT.page_heading+'</a></li>')
+			$('.page-heading').html(response.LANG_TEXT.heading['edit'][0])
+			$('.cat-submit-button').html(response.LANG_TEXT.btn['edit'][0])
+			for (var i = 0; i < form_label_keys.length; i++) {
+				$('[name="'+form_label_keys[i]+'"]').attr('placeholder',form_label[form_label_keys[i]])
+				$('.label-'+form_label_keys[i]+'').html(form_label[form_label_keys[i]])
+			}
+			for (var i = 0; i < response['option'].length; i++) {
+				$('[name="'+response['option'][i]['select_name']+'"]').append('<option value="'+response['option'][i]['option_value']+'">'+response['option'][i]['option_name']+'</option>')
+			}
+			for (var i = 0; i < response['LANG_TEXT']['form_heading'].length; i++) {
+				$('.form-heading').eq(i).html(response['LANG_TEXT']['form_heading'][i]).closest('.row').find('.mb-1').html(response['LANG_TEXT']['form_heading'][i])
+			}
+			pro_name = response.product_price[0].product[0].product_manufacturer+" | "+response.product_price[0].product[0].product_name
+			$('[name="product_id"]').find('option').eq(0).attr('value',response.product_price[0].product_id.$oid).html(pro_name)
+			$('.chosen-single').find('span').html(pro_name)
+			$('[class="chosen-search-input"]').val(pro_name)
+			for (var i = 0; i < response.shop.length; i++) {
+				$('[name="shop_id"]').append('<option value="'+response.shop[i]['_id']['$oid']+'">'+response.shop[i]['shop_name']+'</option>')
+			}
+			$('[name="shop_id"]').val('{{shop_id}}')
+			product_price = response.product_price[0]
+			product_price_keys = Object.keys(product_price)
+			for (var i = 0; i < product_price_keys.length; i++) {
+				if (product_price[product_price_keys[i]].$oid) {
+					$('[name="'+product_price_keys[i]+'"]').val(product_price[product_price_keys[i]].$oid)
+				}else{
+					$('[name="'+product_price_keys[i]+'"]').val(product_price[product_price_keys[i]])
+				}
+			}
+			$('[name="product_id"]').val(product_price['product'][0]['product_name'])
+			if (parseInt($('[name="shop_product_tax"]').val())===0) {
+				$('[name="shop_product_tax_percentage"]').attr('readonly',true)
+			}
+			$('[name="shop_product_product"]').val(product_price.product_name)
+			$('.localstring').keyup()
+		}
+	});
+    $('.needs-validation').submit(function (e) {
+    	e.preventDefault()
+		custom_AJAX({
+			TYPE:"POST",
+			URL: location.origin+'/api/admin/service/price/edit',
+			DATA:{
+				"price_id"                    : $('[name="price_id"]').val(),
+				"active"                      : $('[name="active"]').val(),
+				"shop_id"                     : $('[name="shop_id"]').val(),
+				"TYPE"                        : $('[name="TYPE"]').val(),
+				"final_amount"                : parseInt($('[name="final_amount"]').val().replaceAll(',','')),
+				"discount_percentage"         : parseInt($('[name="discount_percentage"]').val().replaceAll(',','')),
+				"shop_product_msp"            : parseInt($('[name="shop_product_msp"]').val().replaceAll(',','')),
+				"shop_product_price"          : parseInt($('[name="shop_product_price"]').val().replaceAll(',','')),
+				"shop_product_tax"            : parseInt($('[name="shop_product_tax"]').val().replaceAll(',','')),
+				"shop_product_tax_percentage" : parseInt($('[name="shop_product_tax_percentage"]').val().replaceAll(',','')),
+			},
+			SUCCESS:function (response) {
+                $('[name="price_id"]').val(response.price_id)
+				if (response.url) {
+					$('.ajax-msg').html(response.message).attr('class','btn btn-'+response.type)
+				}
+			}
+		});
+    })
+	$('[name="shop_product_tax"]').change()
+</script>
+{% endblock %}

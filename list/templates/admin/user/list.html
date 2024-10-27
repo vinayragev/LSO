@@ -1,0 +1,144 @@
+{% extends "admin/layout.html" %}
+{% block title %}Label{% endblock %}
+
+{% load static %}
+{% block main %}
+<link href="{% static 'pagination/simplePagination.css' %}" rel="stylesheet">
+<script type="text/javascript" src="{% static 'pagination/jquery.simplePagination.js' %}"></script>
+<main>
+	<div class="row mb-6">
+		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+			<div class="card">
+				<div class="tab-content p-4" id="pills-tabContent-table">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>#</th>
+									<th></th>
+									<th></th>
+									<th style="text-align: right;"></th>
+								</tr>
+							</thead>
+							<tbody class="cat-table">
+							</tbody>
+						</table>
+						<div id="light-pagination" class="pagination"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</main>
+
+
+<table style="display: none;" id="hide_table">
+	<tbody>
+		<tr>
+			<td>NUM</td>
+			<td>USER_NAME</td>
+			<td>USER_EMAIL</td>
+			<td style="text-align: right;">
+				<form style="display:inline" method="POST" action="{{ edit }}">
+					<input type="hidden" name="user_id" value="USER_ID">
+					<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+					<span class="btn btn-primary listing-btn" onclick="$(this).parent().submit()">
+					</span>
+				</form>
+				<span class="btn btn-danger listing-btn" data-id="USER_ID" onclick="delete_user($(this))">
+				</span>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+
+
+
+
+<script type="text/javascript">
+	$('.page-heading-btn').html('<a class="btn btn-primary listing-btn" href="'+location.origin+'{{ add }}'+'"></a>')
+	currentPage = 1
+	function get_data() {
+		data= {}
+		data['TYPE'] = 'GET_USER'
+		data['skip'] = (globalThis.currentPage-1)*10
+		if ($('[name="search"]').val().trim()!=='') {
+			data['search'] = $('[name="search"]').val()
+		}
+		keys = Object.keys(data)
+		for (var i = 0; i < keys.length; i++) {
+			if(['',null,NaN].includes(data[keys[i]])){
+				delete data[keys[i]]
+			}
+		}
+		return data;
+	}
+	$('[name="search"]').keyup(function () {
+		$('[name="parent_id"]').val('')
+		if (typeof objTimeout !=='undefined') {
+			clearTimeout(objTimeout)
+		}
+		objTimeout = setTimeout(function () {
+	 		get_cat_ajax(get_data())
+		},1000)
+	})
+	function get_cat_ajax(data) {
+		custom_AJAX({
+			TYPE:"POST",
+			URL: location.origin+'/api/admin/user/list',
+			DATA:data,
+			SUCCESS:function (response) {
+				$('.cat-table').html('')
+				listing = response.user
+				count = response.count_user
+
+				$('#light-pagination').pagination({
+					pages: Math.ceil(count/10),
+					currentPage: globalThis.currentPage,
+					cssStyle: 'light-theme',
+					onPageClick: function (a,b) {
+						globalThis.currentPage = a
+						get_cat_ajax(get_data())
+					}
+				});
+				$('.step-anchor').show()
+				for (var i = 0; i < $('.page-heading').length; i++) {
+					$('.step-anchor').show()
+					$('.page-heading').eq(i).html(response.LANG_TEXT.heading[i])
+				}
+				for (var i = 1; i < $('.table-responsive').find('th').length; i++) {
+					$('.table-responsive').find('th').eq(i).html(response.LANG_TEXT.th[i-1])
+				}
+				for (var i = 0; i < $('.listing-btn').length; i++) {
+					$('.listing-btn').eq(i).html(response.LANG_TEXT.btn[i])
+				}
+
+				for (var i = 0; i < listing.length; i++) {
+					console.log(listing[i].name)
+					HTML = {
+						USER_NAME   : listing[i].name,
+						USER_EMAIL  : listing[i].email,
+						USER_ID     : listing[i]._id.$oid,
+						NUM         : (parseInt((globalThis.currentPage-1)*10)+i+1),
+					}
+					html = replace_HTML($('#hide_table').html().replace('</tbody>','').replace('<tbody>',''),HTML)
+					// // tbody += '</tr>'
+					$('.cat-table').append(html)
+				}
+			}		
+		})
+	}
+	function delete_user(_this) {
+		custom_AJAX({
+			TYPE:"POST",
+			URL: location.origin+'/api/admin/user/delete',
+			DATA:{user_id:_this.attr('data-id')},
+			SUCCESS:function (response) {
+				_this.closest('tr').remove()
+			}
+		});
+	}
+	get_cat_ajax(get_data())
+</script>
+{% endblock %}

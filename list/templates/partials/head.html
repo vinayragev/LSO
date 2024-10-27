@@ -1,0 +1,35 @@
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+
+{% load static %}
+
+<!-- Favicon icon-->
+<link rel="shortcut icon" type="image/x-icon" href="{% static 'assets/images/favicon/favicon.ico' %}">
+
+<!-- Libs CSS -->
+
+
+<link href="{% static 'font-awesome-4.7.0/css/font-awesome.min.css' %}" rel="stylesheet">
+<link href="{% static 'assets/libs/bootstrap-icons.css' %}" rel="stylesheet">
+<link href="{% static 'assets/libs/dropzone.css' %}"  rel="stylesheet">
+<link href="{% static 'assets/libs/materialdesignicons.min.css' %}" rel="stylesheet">
+<link href="{% static 'assets/libs/prism-okaidia.css' %}" rel="stylesheet">
+<link href="{% static 'css/arrow.css' %}" rel="stylesheet">
+<script src="{% static 'assets/libs/jquery.min.js' %}"></script>
+<script src="{% static 'js/all.js' %}"></script>
+<script type="text/javascript">
+STATIC_URL = '{% static '' %}';
+csrfmiddlewaretoken = '{{csrf_token}}';
+uploader_files = []
+params = new URL(location.href)
+params = new URLSearchParams(params.search);
+</script>
+
+
+
+<!-- Theme CSS -->
+<!-- build:css {% static 'assets/css/theme.min.css -' %}-->
+<link rel="stylesheet" href="{% static 'assets/css/theme.css' %}">
+<!-- endbuild -->

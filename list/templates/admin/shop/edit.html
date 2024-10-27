@@ -1,0 +1,166 @@
+{% extends "admin/layout.html" %}
+{% block title %}Edit Shop{% endblock %}
+
+{% load static %}
+{% block main %}
+
+<link href="{% static 'kompletr/css/kompletr.demo.min.css' %}" rel="stylesheet" type="text/css" media="screen" />
+<script type="module" src="{% static 'kompletr/js/kompletr.demo.min.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'ajax-file-uploader/css/jquery.uploader.css' %}">
+<script type="text/javascript" src="{% static 'ajax-file-uploader/dist/jquery.uploader.min.js' %}"></script>
+
+<div class="row mb-6">
+	<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+		<div class="card">
+			<div class="tab-content p-4" id="pills-tabContent-table">
+				<form class="needs-validation" method="POST">
+					{% include 'admin/shop/form.html' %}
+					<button type="submit" class="btn btn-primary cat-submit-button submit-button"></button>
+      		<input type="hidden" name="shop_id" value="{{ shop_id }}">
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	cur_location = false
+    $('.needs-validation').submit(function (e) {
+    	$('.open_time').change()
+    	$('.close_time').change()
+    	e.preventDefault()
+	  	close_time = JSON.parse($('[name="close_time"]').val())
+	  	open_time  = JSON.parse($('[name="open_time"]').val())
+	  	time = []
+	  	for (var i = 0; i < open_time.length; i++) {
+	  		time.push([i,open_time[i],close_time[i]])
+	  	}
+		data = {
+			"TYPE"             :'UPDATE_SHOP',
+			"shop_name"        :$('[name="shop_name"]').val(),
+			"shop_id"          :$('[name="shop_id"]').val(),
+			"owner_full_name"  :$('[name="owner_full_name"]').val(),
+			"currency"         :$('[name="currency"]').val(),
+			"shop_type"        :$('[name="shop_type"]').val(),
+			"mobile"           :$('[name="mobile"]').val(),
+			"email"            :$('[name="email"]').val(),
+			"country"          :$('[name="country"]').val(),
+			"pincode"          :$('[name="pincode"]').val(),
+			"state"            :$('[name="state"]').val(),
+			"city"             :$('[name="city"]').val(),
+			"full_address"     :$('[name="full_address"]').val(),
+			"active"           :$('[name="active"]').val(),
+			"time"             :JSON.stringify(time),
+			"open_time"        :$('[name="open_time"]').val(),
+			"close_time"       :$('[name="close_time"]').val(),
+			"latitude"         :$('[name="latitude"]').val(),
+			"longitude"        :$('[name="longitude"]').val(),
+			"open_since"       :$('[name="open_since"]').val(),
+			"info"             :$('[name="info"]').val(),
+			"banner"           :$('[name="banner"]').val(),
+			"photo"            :$('[name="photo"]').val(),
+		}
+		file = false
+		for (var i = 0; i < globalThis.uploader_files.length; i++) {
+		    if(globalThis.uploader_files[i].type){
+		    	data['banner'] = globalThis.uploader_files[i].file
+					file = true
+		    }
+		}
+		custom_AJAX({
+			TYPE:"POST",
+			URL: location.origin+"/api/admin/shop/edit",
+			DATA: data,
+			SUCCESS:function (response) {
+				if (response.url) {
+					$('.ajax-msg').html(response.message).attr('class','btn btn-'+response.type)
+				}
+			}
+		},file);
+  })
+	custom_AJAX({
+		TYPE:"POST",
+		URL: location.origin+"/api/admin/shop/form",
+		DATA:{shop_id:'{{shop_id}}',TYPE:"GET_SHOP"},
+		SUCCESS:function (response) {
+			country = response.country
+			for (var i = 0; i < country.length; i++) {
+				$('[name="country"]').append('<option value="'+country[i].country_name+'">'+country[i].country_name+'</option>')
+			}
+			form_text = response.LANG_TEXT.label
+			form_text_keys = Object.keys(form_text)
+			$('.step-anchor').show().prepend('<li class="done"><a class="arrow-link" href="{{ url_shop_list }}">'+response.LANG_TEXT.page_heading+'</a></li>')
+			$('.page-heading').html(response['LANG_TEXT']['heading']['edit'][0])
+			for (var i = 0; i < response['LANG_TEXT']['form_heading'].length; i++) {
+				$('.form-heading').eq(i).html(response['LANG_TEXT']['form_heading'][i]).closest('.row').find('.mb-1').html(response['LANG_TEXT']['form_heading'][i])
+			}
+			$('.submit-button').html(response.LANG_TEXT.btn['edit'][0])
+
+			shop_time = response['shop_time']
+			console.log(shop_time)
+			for (var i = 0; i < shop_time.length; i++) {
+				$('.open_time').eq(i).val(shop_time[i]['open_time'])
+				$('.close_time').eq(i).val(shop_time[i]['close_time'])
+			}
+
+			for (var i = 0; i < form_text_keys.length; i++) {
+				$('[name="'+form_text_keys[i]+'"]').attr('placeholder',form_text[form_text_keys[i]])
+				$('.label-'+form_text_keys[i]+'').html(form_text[form_text_keys[i]])
+			}
+			shop = response.shop
+			keys = Object.keys(shop)
+			$('#shop_banner_img').attr('src',get_img_src(shop['banner']))
+			for (var i = 0; i < keys.length; i++) {
+				$('[name="'+keys[i]+'"]').val(shop[keys[i]])
+			}
+			if (shop.banner!='') {
+				$('.label-banner').next().next().find('.jquery-uploader-preview-container').html('<div class="jquery-uploader-card"><div class="jquery-uploader-preview-main"><div class="jquery-uploader-preview-action"><ul><li class="file-delete"><i class="fa fa-pencil-square-o" data-shop-id="'+shop._id.$oid+'" onclick="$(\'.banner\').eq(0).click()"></i></li></ul></div><img alt="preview"  class="files_img" src="'+get_img_src(shop.banner)+'"></div></div>')
+			}
+			if (shop.photo!='') {
+				$('.label-photo').next().next().find('.jquery-uploader-preview-container').html('<div class="jquery-uploader-card"><div class="jquery-uploader-preview-main"><div class="jquery-uploader-preview-action"><ul><li class="file-delete"><i class="fa fa-pencil-square-o" data-shop-id="'+shop._id.$oid+'" onclick="$(\'.photo\').eq(0).click()"></i></li></ul></div><img alt="preview"  class="files_img" src="'+get_img_src(shop.photo)+'"></div></div>')
+			}
+
+      $('#map').attr('href','https://www.google.com/maps?q='+shop['latitude']+','+shop['longitude'])
+			// open_time = JSON.parse($('[name="open_time"]').val())
+			// for (var i = 0; i < open_time.length; i++) {
+			// 	$('.open_time').eq(i).val(open_time[i])
+			// }
+			// close_time = JSON.parse($('[name="close_time"]').val())
+			// for (var i = 0; i < close_time.length; i++) {
+			// 	$('.close_time').eq(i).val(close_time[i])
+			// }
+		}		
+	})
+	$('.open_time').change(function () {
+		list = []
+		$('.open_time').each(function () {
+			list.push($(this).val())
+		})
+		$('[name="open_time"]').val(JSON.stringify(list))
+	})
+	$('.close_time').change(function () {
+		list = []
+		$('.close_time').each(function () {
+			list.push($(this).val())
+		})
+		$('[name="close_time"]').val(JSON.stringify(list))
+	})
+	let ajaxConfig = {
+		ajaxRequester: function (config, uploadFile, pCall, sCall, eCall) {
+			let progress = 0
+			let interval = setInterval(() => {
+				progress += 10;
+				pCall(progress)
+				if (progress >= 100) {
+					clearInterval(interval)
+					const windowURL = window.URL || window.webkitURL;
+					sCall({
+						data: windowURL.createObjectURL(uploadFile.file)
+					})
+				}
+			}, 300)
+		}
+	}
+</script>
+    
+    {% endblock %}

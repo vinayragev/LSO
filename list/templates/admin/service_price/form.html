@@ -1,0 +1,103 @@
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                   <label class="  label-product_id"></label>
+                   <input type="text" class="form-select" name="product_id" readonly="readonly">
+               </div>
+               <div class="col-md-6 mb-3">
+                   <label class="  label-shop_id"></label>
+                   <select class="form-select" name="shop_id"></select>
+               </div>
+           </div>
+    </div>
+</div>
+<div class="card" style="margin-top: 25px;">
+    <div class="tab-content p-4">
+        <div class="row">
+             <div class="col-md-6 mb-3">
+                 <label class=" label-shop_product_msp"></label>
+                 <input type="text" class="form-control localstring" name="shop_product_msp" required>
+             </div>
+
+             <div class="col-md-6 mb-3">
+                 <label class=" label-shop_product_price"></label>
+                 <input type="text" class="form-control localstring" name="shop_product_price" required>
+             </div>
+
+             <div class="col-md-6 mb-3">
+                 <label class=" label-shop_product_tax"></label>
+                 <select type="text" class="form-select" name="shop_product_tax" required></select>
+             </div>
+
+             <div class="col-md-6 mb-3">
+                 <label class=" label-shop_product_tax_percentage"></label>
+                 <input type="float" class="form-control localstring" name="shop_product_tax_percentage" required>
+             </div>
+         </div>
+     </div>
+</div>
+<div class="card" style="margin-top: 25px;">
+    <div class="tab-content p-4">
+        <div class="row">
+           <div class="col-md-4 mb-3">
+               <label class=" label-final_amount"></label>
+               <input type="text" class="form-control localstring" name="final_amount" readonly="readonly" required>
+           </div>
+
+           <div class="col-md-4 mb-3">
+               <label class=" label-tax_amount"></label>
+               <input type="text" class="form-control localstring" name="tax_amount" readonly="readonly" required>
+           </div>
+
+           <div class="col-md-4 mb-3">
+               <label class=" label-discount_percentage"></label>
+               <input type="text" class="form-control localstring" name="discount_percentage" readonly="readonly" required>
+           </div>
+       </div>
+   </div>
+</div>
+<div class="card" style="margin-top: 25px;">
+    <div class="tab-content p-4">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+             <label class=" label-active"></label>
+             <select class="form-select" name="active">
+                <option value="1">Activate</option>
+                <option value="0">Deactivate</option>
+            </select>
+        </div>
+    </div>
+<div class="mb-3 row ajax-message-div" style="display: None;">
+	<div class="alert alert-success alert-dismissible fade show" role="alert">
+		<span class="ajax-message"></span>
+		<span class="btn-close" onclick="$('.ajax-message-div').hide()" aria-label="Close"></span>
+	</div>
+</div>
+<script type="text/javascript">
+	function show_product_price() {
+		msp = parseInt($('[name="shop_product_msp"]').val().replaceAll(',',''))
+		csp = parseInt($('[name="shop_product_price"]').val().replaceAll(',',''))
+		tax = parseInt($('[name="shop_product_tax_percentage"]').val().replaceAll(',',''))
+		$('[name="shop_product_msp"]').val(toLocaleString(msp))
+		$('[name="shop_product_price"]').val(toLocaleString(csp))
+		$('[name="shop_product_tax_percentage"]').val(toLocaleString(tax))
+		if (parseInt($('[name="shop_product_tax"]').val())===1) {
+			$('[name="shop_product_tax_percentage"]').removeAttr('readonly')
+			amount = (1+parseInt(tax)/100)
+			amount *= parseInt(csp)
+			tax_amount = parseInt(amount-csp)
+		}else{
+			$('[name="shop_product_tax_percentage"]').val(0).attr('readonly','readonly')
+			amount = parseInt(csp)
+			tax_amount = 0
+		}
+		$('[name="final_amount"]').val(toLocaleString(amount))
+		$('[name="tax_amount"]').val(toLocaleString(tax_amount))
+		$('[name="discount_percentage"]').val(toLocaleString(((msp-amount)/msp)*100))
+	}
+	$('[name="shop_product_msp"],[name="shop_product_price"],[name="shop_product_tax_percentage"],[name="shop_product_qty_type"]').keyup(function () {
+		show_product_price()
+	})
+	$('[name="shop_product_tax"]').change(function () {
+		show_product_price()
+	})
+</script>

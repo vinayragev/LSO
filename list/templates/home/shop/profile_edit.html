@@ -1,0 +1,133 @@
+{% extends "home/shop/layout.html" %}
+    {% load static %}
+{% block title %}Profile Update{% endblock %}
+
+{% block main %}
+<div class="container">
+
+
+
+
+    <div class="row mb-6">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <div class="tab-content p-4" id="pills-tabContent-table">
+                    <form class="needs-validation" method="POST">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class=" label-name">Full name</label>
+                            <input type="text" class="form-control" placeholder="Full name" name="name">
+                        </div>
+
+                        <div class="col-md-6  mb-3">
+                            <label class=" label-email">Email</label>
+                            <input type="email" class="form-control" placeholder="Email" name="email" disabled>
+                        </div>
+
+                        <div class="col-md-6  mb-3">
+                            <label class=" label-phone">Phone <span class="text-muted">(Optional)</span></label>
+                            <input type="text" class="form-control" name="phone" placeholder="Phone">
+                        </div>
+
+                        <div class="col-md-4  mb-3">
+                            <label class=" label-country">Country</label>
+                            <input class="form-control" name="country" placeholder="Country">
+                        </div>
+
+                        <div class="col-md-4  mb-3">
+                            <label class=" label-state">State</label>
+                            <input type="text" class="form-control" name="state" placeholder="State">
+                        </div>
+
+                        <div class="col-md-4  mb-3">
+                            <label class=" label-city">City</label>
+                            <input type="text" class="form-control" name="city" placeholder="City">
+                        </div>
+
+                        <div class="col-md-6  mb-3">
+                            <label class=" label-zipcode">Zip code </label>
+                            <input type="text" class="form-control" name="zipcode" placeholder="Zip Code">
+                        </div>
+
+                        <div class="col-md-6  mb-3">
+                            <label class=" label-address">Address</label>
+                            <input type="text" class="form-control" name="address" placeholder="Address">
+                        </div>
+                        <div class="col-md-6  mb-3">
+                            <label class=" label-country">DOB</label>
+                            <input type="date" class="form-control" name="dob" placeholder="Country">
+                        </div>
+
+                        <div class="col-md-6  mb-3">
+                            <label class=" label-state">Gender</label>
+                            <select class="form-select" name="gender" placeholder="State">
+                                <option>Select gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="custom">Custom</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- row -->
+                    <div class="row align-items-center">
+                        <div class="offset-md-4 col-md-8 mt-4">
+                            <button type="submit" class="btn btn-primary"> Save
+                            Changes</button>
+                        </div>
+                        <div class="mb-3 row ajax-message-div" style="display: None;">
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <span class="ajax-message"></span>
+                                <span class="btn-close" onclick="$('.ajax-message-div').hide()" aria-label="Close"></span>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+        <!-- card -->
+
+<script type="text/javascript">
+    custom_AJAX({
+        TYPE:"POST",
+        URL: location.origin+"/api/user_profile_detail",
+        DATA:{TYPE:"GET_DETAIL"},
+        SUCCESS:function (response) {
+            $('.needs-validation').find('[name="name"]').val(response.user['name'])
+            $('.needs-validation').find('[name="dob"]').val(response.user['dob'])
+            $('.needs-validation').find('[name="gender"]').val(response.user['gender'])
+            $('.needs-validation').find('[name="email"]').val(response.user['email'])
+            $('.needs-validation').find('[name="phone"]').val(response.user['phone'])
+            $('.needs-validation').find('[name="country"]').val(response.user['country'])
+            $('.needs-validation').find('[name="state"]').val(response.user['state'])
+            $('.needs-validation').find('[name="city"]').val(response.user['city'])
+            $('.needs-validation').find('[name="zipcode"]').val(response.user['zipcode'])
+            $('.needs-validation').find('[name="address"]').val(response.user['address'])
+        }
+    })
+    $('.needs-validation').submit(function (e) {
+        e.preventDefault()
+        data = {
+            TYPE     :"UPDATE_PROFILE",
+            name     :$('.needs-validation').find('[name="name"]').val(),
+            phone    :$('.needs-validation').find('[name="phone"]').val(),
+            country  :$('.needs-validation').find('[name="country"]').val(),
+            state    :$('.needs-validation').find('[name="state"]').val(),
+            city     :$('.needs-validation').find('[name="city"]').val(),
+            zipcode  :$('.needs-validation').find('[name="zipcode"]').val(),
+            address  :$('.needs-validation').find('[name="address"]').val(),
+            dob      :$('.needs-validation').find('[name="dob"]').val(),
+            gender   :$('.needs-validation').find('[name="gender"]').val(),
+        }
+        custom_AJAX({
+            TYPE:"POST",
+            URL: location.origin+"/api/user_profile_update",
+            DATA:data,
+            SUCCESS:function (response) {
+              $('[href="#cart"]').click()
+            }
+        })
+    })
+</script>
+{% endblock %}

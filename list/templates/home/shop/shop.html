@@ -1,0 +1,140 @@
+{% extends "home/shop/layout.html" %}
+
+{% load static %}
+
+{% block title %}Home{% endblock %}
+{% block main %}
+<link href="{% static 'bootstrap' %}/blog/blog.css" rel="stylesheet">
+<div class="container">
+        <div class="row card-ajax-responsive">
+            <div class="h-100 p-5 bg-light border rounded-3">
+              <h2>Search Products</h2>
+              <p>Or, keep it light and add a border for some added definition to the boundaries of your content. Be sure to look under the hood at the source HTML here as we've adjusted the alignment and sizing of both column's content for equal-height.</p>
+          </div>
+      </div>
+      <span class="btn btn-info next-10-btn" style="display:none;">Next</span>
+</div>
+
+<div style="display: none;" class="no-shop-List">
+    <div class="h-100 p-5 bg-light border rounded-3">
+      <h2>No Product found</h2>
+      <p>Or, keep it light and add a border for some added definition to the boundaries of your content. Be sure to look under the hood at the source HTML here as we've adjusted the alignment and sizing of both column's content for equal-height.</p>
+  </div>
+</div>
+<div style="display: none;" id="card_table">
+    <div class="col-md-6" style="margin:5px 0;">
+        <div class="card">
+          <div class="row g-0 border rounded overflow-hidden flex-md-row shadow-sm h-md-250 position-relative">
+            <div class="col p-4 d-flex flex-column position-static">
+                <h3 class="mb-0">SHOP_NAME</h3>
+                <strong class="d-inline-block mb-2 text-primary">SHOP_FULL_ADDRESS</strong>
+                <div class="mb-1 text-muted">SHOP_STAR</div>
+                <div class="mb-1 text-muted">SHOP_MOBILE</div>
+                <div class="mb-1 text-muted"><i class="fa fa-plane" aria-hidden="true"></i> <b>DISTANCE</b></div>
+                <a href="/seller?seller_id=SHOP_ID" target="_blank" class="stretched-link">Learn More</a>
+            </div>
+            <div class="col-auto d-none d-lg-block">
+                <img style="height: 248px;width: 100%;" data-src="IMG_SRC">
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<script type="text/javascript">
+    currentPage = 0
+    // $('[name="pincode"]').val(getCookie('pincode'))
+    function get_listing() {
+        category_id = []
+        for (var i = 0; i < $('[class="form-check-input"]').length; i++) {
+            if ($('[class="form-check-input"]').eq(i).prop('checked')===true) {
+                category_id.push($('[class="form-check-input"]').eq(i).attr('id'))
+            }
+        }
+        // if(getCookie('pincode')!==$('[name="pincode"]').val()||$('[name="pincode"]').val()!=''){
+        //     setCookie('pincode',$('[name="pincode"]').val())
+        // }
+        if(getCookie('search')!==$('[name="search"]').val()||$('[name="search"]').val()!=''){
+            setCookie('search',$('[name="search"]').val())
+        }
+        category_id = category_id.join(',')
+        custom_AJAX({
+            TYPE:"POST",
+            URL: location.origin+'/api/shop',
+            DATA:{search:$('[name="search"]').val(),pincode:$('[name="pincode"]').val(),shop_order:$('[name="shop_order"]').val(),skip:currentPage,TYPE:'GET_SHOP_LISTING'},
+            SUCCESS:function (response) {
+                listing = response.shop
+                count = response.shopcount
+                // $('.card-ajax-responsive').html('')
+                if (response.option) {
+                    
+                    for (var i = 0; i < response.option.length; i++) {
+                        $('[name="'+response['option'][i]['select_name']+'"]').append('<option value="'+response['option'][i]['option_value']+'">'+response['option'][i]['option_name']+'</option>')
+                    }
+                }
+                for (var i = 0; i < listing.length; i++) {
+                    html = replace_HTML($('#card_table').html(),{
+                        'data-src="IMG_SRC"'   : 'src="'+get_img_src(listing[i]['banner'])+'"',
+                        "SHOP_NAME"         : listing[i]['shop_name'],
+                        "SHOP_FULL_ADDRESS" : listing[i]['full_address'],
+                        "SHOP_MOBILE"       : listing[i]['mobile'],
+                        "SHOP_STAR"         : get_star(listing[i]['star']),
+                        "DISTANCE"          : toLocaleString(listing[i]['distance'])+' Km',
+                        "SHOP_ID"           : listing[i]['_id']['$oid'],
+                    })
+                    $('.card-ajax-responsive').append(html)
+                }
+                if(listing.length===0 && currentPage===0){
+                    $('.card-ajax-responsive').html($('.no-shop-List').html().trim())
+                }else if(listing.length!=10){
+                    $('.next-10-btn').hide()
+                }else if(listing.length===10){
+                    $('.next-10-btn').show()
+                }
+                // category = response.category
+                // $('.product_category').html('')
+                // for (var i = category.length - 1; i >= 0; i--) {
+                //     if (category_id.includes(category[i]['_id'])) {
+                //         checked = 'checked'
+                //     }else{
+                //         checked = ''
+                //     }
+                //     $('.product_category').append('<div><input type="checkbox" onchange="product_category()" class="form-check-input" id="'+category[i]['_id']+'" '+checked+'><label class="form-check-label" for="'+category[i]['_id']+'">'+category[i]['_id']+'</label><span style="float:right;">['+category[i]['count']+']</span></div>')
+                // }
+            }
+        })        
+    }
+    // $('[name="zipcode"]').change(function () {
+    //     get_listing()
+    // })
+    $('.next-10-btn').click(function () {
+        currentPage+=10;
+        get_listing()
+    })
+    // $('[name="zipcode"]').submit(function (e) {
+    //     e.preventDefault()
+    //     get_listing()
+    // })
+    $('.pincode-form').submit(function (e) {
+        e.preventDefault()
+        $('.card-ajax-responsive').html('')
+        get_listing()
+    })
+    $('.header-form').submit(function (e) {
+        e.preventDefault()
+        $('.card-ajax-responsive').html('')
+        get_listing()
+    })
+    if (input_GET('search')) {
+        $('[name="search"]').val(input_GET('search'))
+        $('.card-ajax-responsive').html('')
+        get_listing()
+    }
+    function product_category() {
+        $('.card-ajax-responsive').html('')
+        get_listing()
+    }
+    update_geolocation()
+
+
+</script>
+{% endblock %}

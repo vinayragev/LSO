@@ -1,0 +1,147 @@
+{% extends "admin/layout.html" %}
+{% block title %}Category{% endblock %}
+
+{% load static %}
+{% block main %}
+<link href="{% static 'pagination/simplePagination.css' %}" rel="stylesheet">
+<script type="text/javascript" src="{% static 'pagination/jquery.simplePagination.js' %}"></script>
+<div class="row mb-6">
+	<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+		<div class="card">
+			<div class="tab-content p-4" id="pills-tabContent-table">
+				<div class="table-responsive">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>#</th>
+								<th></th>
+								<th></th>
+								<th style="text-align: right;"></th>
+							</tr>
+						</thead>
+						<tbody class="cat-table">
+						</tbody>
+					</table>
+				</div>
+				<div id="light-pagination" class="pagination"></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<input type="hidden" name="parent_id" value="{{ parent_id }}">
+<table style="display: none;" id="hide_table">
+	<tr>
+		<td>NUM</td>
+		<td>PARENT_NAME</td>
+		<td>CATEGORY_NAME</td>
+		<td style="text-align: right;">
+			<form style="display:inline" method="POST" action="{{ edit }}">
+				<input type="hidden" name="category_id" value="CATEGORY_PK_ID">
+				<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+				<span class="btn btn-primary listing-btn" onclick="$(this).parent().submit()">
+				</span>
+			</form>
+			<span class="btn btn-danger listing-btn"  data-id="CATEGORY_PK_ID" onclick="delete_category($(this))">
+			</span>
+		</td>
+	</tr>
+</table>
+	<input type="hidden" name="TYPE" value="GET_CATEGORY">
+	{% load static %}
+	<script type="text/javascript">
+		currentPage = 1
+		$('.page-heading-btn').html('<a class="btn btn-primary listing-btn" href="'+location.origin+'{{ add }}'+'"></a>')
+		function get_data() {
+			data= {}
+			if ($('[name="parent_id"]').eq(0).val()!='') {
+				data['parent_id'] = $('[name="parent_id"]').eq(0).val()
+			}
+			data['TYPE'] = 'GET_CATEGORY'
+			keys = Object.keys(data)
+			for (var i = 0; i < keys.length; i++) {
+				if(['',null,NaN].includes(data[keys[i]])){
+					delete data[keys[i]]
+				}
+			}
+			data['skip'] = (globalThis.currentPage-1)*10
+			if ($('[name="search"]').val().trim()!=='') {
+				data['search'] = $('[name="search"]').val()
+			}
+			return data;
+		}
+		$('[name="search"]').keyup(function () {
+			$('[name="parent_id"]').val('')
+			if (typeof objTimeout !=='undefined') {
+		currentPage = 1
+				clearTimeout(objTimeout)
+			}
+			objTimeout = setTimeout(function () {
+				get_cat_ajax(get_data())
+			},1000)
+		})
+		function get_cat_ajax(data) {
+			custom_AJAX({
+				TYPE:"POST",
+				URL: location.origin+'/api/admin/category/list',
+				DATA:data,
+				SUCCESS:function (response) {
+					listing = response.category
+					count = response.count_category
+					$('#light-pagination').pagination({
+						pages: Math.ceil(count/10),
+						currentPage: globalThis.currentPage,
+						cssStyle: 'light-theme',
+						onPageClick: function (a,b) {
+							globalThis.currentPage = a
+							get_cat_ajax(get_data())
+						}
+					});
+					if (response.LANG_TEXT) {
+						$('.step-anchor').show()
+						$('.page-heading').eq(0).html(response.LANG_TEXT.page_heading)
+						for (var i = 1; i < $('.table-responsive').find('th').length; i++) {
+							$('.table-responsive').find('th').eq(i).html(response.LANG_TEXT.th[i-1])
+						}
+						for (var i = 0; i < $('.listing-btn').length; i++) {
+							$('.listing-btn').eq(i).html(response.LANG_TEXT.btn[i])
+						}
+					}
+
+					$('.cat-table').html('')
+					for (var i = 0; i < Object.keys(listing).length; i++) {
+						HTML = {
+							NUM            : (parseInt((globalThis.currentPage-1)*10)+i+1),
+							CATEGORY_PK_ID : listing[i]._id.$oid,
+							CATEGORY_NAME  : listing[i].category_name
+						}
+						if(listing[i]['parent'].length){
+							HTML['PARENT_NAME'] = listing[i]['parent'][0].category_name
+							HTML['PARENT_ID'] = listing[i]['parent_id']['$oid']
+						}else{
+						}
+						html = replace_HTML($('#hide_table').html().replace('</tbody>','').replace('<tbody>',''),HTML)
+						$('.cat-table').append(html)
+					}
+				}		
+			})
+		}
+		function delete_category(_this) {
+			custom_AJAX({
+				TYPE:"POST",
+				URL: location.origin+'/api/admin/category/delete',
+				DATA:{category_id:_this.attr('data-id')},
+				SUCCESS:function (response) {
+					_this.closest('tr').remove()
+				}
+			});
+		}
+		function parent_category(_this) {
+			$('#hide_table').prev().val(_this.attr('data-id'))
+			globalThis.currentPage=1
+			$('[name="search"]').val('')
+			get_cat_ajax(get_data())
+		}
+		get_cat_ajax(get_data())
+	</script>
+	{% endblock %}

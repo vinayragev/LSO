@@ -1,0 +1,33 @@
+<div class="row">
+	<div class="col-md-6 mb-3">
+		<div class="row">
+			<div class="col-md-12 mb-3">
+				<label class="label-page_name"></label>
+				<input type="text" class="form-control" name="page_name" value="">
+			</div>
+			<div class="col-md-12 mb-3">
+				<label class="label-language"></label>
+				<input type="text" class="form-control" name="language" value="">
+			</div>
+			<div class="col-md-12 mb-3">
+				<label class="label-active"></label>
+				<select class="form-select" name="active" value="">
+					<option value="1">Activate</option>
+					<option value="0">Deactivate</option>
+				</select>
+			</div>
+			<div class="col-md-12 mb-3 ajax-message-div" style="display: None;">
+				<div class="alert alert-success alert-dismissible fade show" role="alert">
+					<span class="ajax-message"></span>
+					<span class="btn-close" onclick="$('.ajax-message-div').hide()" aria-label="Close"></span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-6 mb-3">
+		<div class="col-md-12 mb-3">
+			<label class="label-label"></label>
+			<textarea type="text" class="form-control" rows="20" name="label" value=""></textarea>
+		</div>
+	</div>
+</div>

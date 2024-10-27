@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+    <title>AJAX-enabled File Uploader Demos</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="./css/jquery.uploader.css">
+    
+</head>
+<body>
+<div class="container">
+    <div id="carbon-block" style="margin:30px auto"></div>
+<div style="margin:30px auto">
+</div>
+    <ul>
+        <li>
+            <i>Multiple File Upload</i>
+            <input type="text" id="demo1" value="">
+        </li>
+    </ul>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="./dist/jquery.uploader.min.js"></script>
+<script type="application/javascript">
+    let ajaxConfig = {
+        ajaxRequester: function (config, uploadFile, pCall, sCall, eCall) {
+            let progress = 0
+            let interval = setInterval(() => {
+                progress += 10;
+                pCall(progress)
+                if (progress >= 100) {
+                    clearInterval(interval)
+                    const windowURL = window.URL || window.webkitURL;
+                    sCall({
+                        data: windowURL.createObjectURL(uploadFile.file)
+                    })
+                }
+            }, 300)
+        }
+    }
+    $("#demo1").uploader({multiple: true, ajaxConfig: ajaxConfig,autoUpload: false,
+        defaultValue: [
+            {
+                name: "jQuery",
+                url: "https://www.jqueryscript.net/dummy/5.jpg"
+            }, {
+                name: "script",
+                url: "https://www.jqueryscript.net/dummy/6.jpg"
+            }
+        ]
+})
+    $("#demo2").uploader({ajaxConfig: ajaxConfig})
+    $("#demo3").uploader({
+        multiple: true,
+        ajaxConfig: ajaxConfig
+    })
+</script>
+
+</body>
+</html>

@@ -1,0 +1,135 @@
+{% extends "admin/layout.html" %}
+{% block title %}Query Details{% endblock %}
+
+{% load static %}
+
+{% block main %}
+        <div class="py-6" data-category="#query">
+          <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-12 mb-6">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Query</h4>
+                  <div class="row">
+                    <div class="col-md-4">
+                      <h5>Shop Name</h5>
+                      <p class="shop_name"></p>
+                    </div>
+                    <div class="col-md-4">
+                      <h5>Product Details</h5>
+                      <p class="product_name"></p>
+                    </div>
+                    <div class="col-md-4">
+                      <h5>Query Status</h5>
+                      <input type="hidden" name="query_id">
+                      <select name="query_status" class="form-select"></select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr>
+        <div class="py-6" data-category="#query">
+          <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-12 mb-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="cart_query"></div>
+                        <form id="REPLAY">
+                            <textarea class="form-control" name="replay"></textarea>
+                            <input type="submit" value="submit">
+                        </form>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+<script type="text/javascript">
+    custom_AJAX({
+        TYPE:"POST",
+        URL: location.origin+"/api/admin/query/view",
+        DATA:{TYPE:"GET_QUERY_DETAIL",query_id:input_GET('query_id')},
+        SUCCESS:function (response) {
+            shop = response.query[0].shop[0]
+            user = response.query[0].user[0]
+            product = response.query[0].product[0]
+            message = response.query[0].message
+            option = response.option
+            for (var i = 0; i < option.length; i++) {
+                $('[name="'+option[i]['select_name']+'"]').append('<option value="'+option[i]['option_value']+'">'+option[i]['option_name']+'</option>')
+            }
+            $('.shop_name').html(shop['shop_name'])
+            $('.product_name').html(product['product_name'])
+            $('[name="query_status"]').val(response.query[0]['query_status'][0]['option_value'])
+            $('[name="query_id"]').val(response.query[0]['_id']['$oid'])
+            $('.step-anchor').show()
+            for (var i = 0; i < $('.page-heading').length; i++) {
+                $('.step-anchor').show()
+                $('.page-heading').eq(i).html(response.LANG_TEXT.heading[i])
+            }
+            // for (var i = 1; i < $('.table-responsive').find('th').length; i++) {
+            //     $('.table-responsive').find('th').eq(i).html(response.FORM_TEXT.th[i-1])
+            // }
+            // $('.cart_query').html('')
+            // for (var i = 0; i < message.length; i++) {
+            //     $('.cart_query').prepend('<tr><td>'+message[i]['query']+'</td><td>'+message[i]['user'][0]['name']+'</td><td>'+get_time(message[i]['created_at']['$date'])+'</td></tr>')
+
+            // }
+
+
+            $('.cart_query').html('')
+            for (var i = 0; i < message.length; i++) {
+              if (message[i].user[0]['user_id']=={{ request.user.id }}) {
+                float = "right"
+              }else{
+                float = "left"
+              }
+              if (float==='left') {
+                  $('.cart_query').prepend('<p style="text-align:'+float+'"><span class="btn btn-sm bg-dark" style="color:white;">'+message[i].user[0]['name']+'</span><span class="btn btn-sm btn-light">'+message[i].query+'</span><br><small>'+get_time(message[i]['created_at']["$date"])+'</small></p>')
+              }else{
+                  $('.cart_query').prepend('<p style="text-align:'+float+'"><span class="btn btn-sm bg-light">'+message[i].query+'</span><span class="btn btn-sm btn-dark">'+message[i].user[0]['name']+'</span><br><small>'+get_time(message[i]['created_at']["$date"])+'</small></p>')
+              }
+
+            }
+
+
+        }
+    })
+    $('#REPLAY').submit(function (e) {
+        e.preventDefault()
+        custom_AJAX({
+            TYPE:"POST",
+            URL: location.origin+"/api/admin/query/replay",
+            DATA:{TYPE:"REPLAY",query_id:$('[name="query_id"]').val(),replay:$('[name="replay"]').val()},
+            SUCCESS:function (response) {
+                $('[name="replay"]').val('')
+                $('.cart_query').html('')
+                message = response.message
+                for (var i = 0; i < message.length; i++) {
+                  if (message[i].user[0]['user_id']=={{ request.user.id }}) {
+                    float = "right"
+                  }else{
+                    float = "left"
+                  }
+                  if (float==='left') {
+                      $('.cart_query').prepend('<p style="text-align:'+float+'"><span class="btn btn-sm bg-dark" style="color:white;">'+message[i].user[0]['name']+'</span><span class="btn btn-sm btn-light">'+message[i].query+'</span><br><small>'+get_time(message[i]['created_at']["$date"])+'</small></p>')
+                  }else{
+                      $('.cart_query').prepend('<p style="text-align:'+float+'"><span class="btn btn-sm bg-light">'+message[i].query+'</span><span class="btn btn-sm btn-dark">'+message[i].user[0]['name']+'</span><br><small>'+get_time(message[i]['created_at']["$date"])+'</small></p>')
+                  }
+                }
+            }
+        })
+    })
+    $('[name="query_status"]').change(function () {
+        custom_AJAX({
+            TYPE:"POST",
+            URL: location.origin+"/api/admin/query/change_status",
+            DATA:{TYPE:"UPDATE_STATUS",query_id:$('[name="query_id"]').val(),query_status:$(this).val()},
+            SUCCESS:function (response) {
+            }
+        })
+    })
+</script>
+{% endblock %}

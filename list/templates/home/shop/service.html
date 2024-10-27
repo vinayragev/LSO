@@ -1,0 +1,391 @@
+{% extends "home/shop/layout.html" %}
+
+{% load static %}
+{% block title %}Service{% endblock %}
+
+{% block main %}
+    <link rel="stylesheet" href="{% static 'owl-carousel/assets/owlcarousel/assets/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'owl-carousel/assets/owlcarousel/assets/owl.theme.default.min.css' %}">
+    <link href="{% static 'bootstrap' %}/blog/blog.css" rel="stylesheet">
+<div class="container">
+    
+    <div class="row g-5">
+        <div class="col-md-5">
+            <div class="position-sticky">
+                <div class="card">
+                    <div style="height:450px;text-align: center;vertical-align: middle;">
+                        <img class="full-img" style="width:auto;height:450px;text-align: center;vertical-align: middle;" /> 
+                    </div>
+                </div>
+                <div class="card" style="margin-top:15px;">
+                    <div class="card-body">
+                        <div class="owl-carousel owl-theme"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="product-name"></h3>
+                    <a class="product_manufacturer"></a>
+                    <div class="product_qty"></div>
+                    <div class="product_star"></div>
+                    <p class="product_desc" style="height: 395px;overflow-y: auto;"></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div style="margin-top: 30px;">
+                        <form class="product_filter">
+                            <div class="row">
+                                <div class="col-xl-3">
+                                    <label>Sort by</label>
+                                    <Select name="product_order" class="filter_change form-select form-select-sm"></Select>
+                                </div>
+                                <div class="col-xl-3">
+                                    <label>Pincode</label>
+                                    <input type="number" name="pincode" class="filter_change form-control form-control-sm" placeholder="Pincode">
+                                </div>
+                                <div class="col-xl-3">
+                                    <label>Min Price</label>
+                                    <input type="text" name="min_price" class="filter_change form-control form-control-sm toLocaleString" placeholder="Min">
+                                </div>
+                                <div class="col-xl-3">
+                                    <label>Max Price</label>
+                                    <input type="text" name="max_price" class="filter_change form-control form-control-sm toLocaleString" placeholder="Max">
+                                </div>
+                            </div>
+                            <span style="float: right;margin-top: 15px;">
+                                <button class="btn btn-dark btn-sm get-shop-listing">
+                                    <i class="fa fa-search" aria-hidden="true"></i>
+                                </button>
+                            </span>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top: 30px;">
+                <div class="row card-ajax-responsive"></div>
+                <button data-value="0" class="btn btn-sm btn-primary add-more-shop" style="display:none;">Add more</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    
+    <div class="container py-6">
+        <div class="row mb-6">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="tab-content p-4" id="pills-tabContent-table">
+                    <div class="tab-pane tab-example-design fade show active" id="pills-table-design" role="tabpanel" aria-labelledby="pills-table-design-tab">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="display: none;" id="card_table">
+        <div class="col-xl-6">
+            <div class="card row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+                <div class="col p-4 d-flex flex-column position-static">
+                    <h3 class="mb-0"><a href="/seller?seller_id=SHOP_ID" class="shop_name" target="_blank">SHOP_NAME</a></h3>
+                    <div class="mb-1 text-muted">FULL_ADDRESS</div>
+                    <div class="mb-1 text-muted">SHOP_STAR</div>
+                    <p class="row card-text mb-auto">
+                        <span class="btn col btn-sm btn-danger"><b>DISCOUNT </b> % Off</span> 
+                        <span class="btn col btn-sm"><b>FINAL_AMOUNT    </b></span>
+                        <span class="btn col btn-sm"><del class="text-danger"><b>MSP    </b></del> </span> 
+                    </p>
+                    <div class="row card-text mb-auto">
+                        <span class="col btn btn-sm btn-dark" data-price-id="PRICE_ID" onclick="send_query($(this))"><i class="fa fa-question" aria-hidden="true"></i></span><br>
+                        <span class="col btn btn-sm btn-dark add-to-cart" data-price-id="PRICE_ID">
+                            <i class=" fa fa-shopping-cart " style  aria-hidden="true"></i>
+                        </span><br>
+                        <a class="col btn btn-sm btn-dark" href="GROLOCATION" target="_blank"><i class="fa fa-plane" aria-hidden="true"></i> <b>DISTANCE</b></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title model_shop_name" id="exampleModalLabel"></h5>
+            <button type="button" class="close" data-dismiss="modal" onclick="close_model()" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form id="form_query">
+              <div class="modal-body">
+                <h5 class="modal-title product-name" id="exampleModalLabel"></h5>
+                  <div class="form-group">
+                    <label for="message-text" class="col-form-label">Message:</label>
+                    <input type="hidden" name="product_price_id">
+                    <textarea class="form-control" name="query" id="message-text"></textarea>
+                  </div>
+              </div>
+              <div class="mb-3 ajax-message-div" style="display: None;padding:15px">
+                  <div class="alert alert-success alert-dismissible fade show" role="alert">
+                      <span class="ajax-message"></span>
+                      <span class="btn-close" onclick="$('.ajax-message-div').hide()" aria-label="Close"></span>
+                  </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="close_model()">Close</button>
+                <input type="submit" class="btn btn-primary" value="Send Query">
+              </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+<script src="{% static 'owl-carousel/assets/owlcarousel/owl.carousel.js' %}"></script>
+<script type="text/javascript">
+    $('.toLocaleString').keyup(function (argument) {
+        $(this).val(toLocaleString(parseInt($(this).val().replaceAll(',',''))))
+    })
+    $('.filter_change').change(function (argument) {
+        filter_change = true
+        $('.add-more-shop').attr('data-value',0)
+    })
+    filter_change = true
+    // function get_ajax_shop_listing(type){
+    //     product_id = input_GET('product_id') // 'chrome-instant'
+    //     data = {TYPE:type,product_id:product_id};
+    //     data['product_order']          = $('[name="product_order"]').val()
+    //     data['pincode']                = $('[name="pincode"]').val()
+    //     data['shop_product_condition'] = $('[name="shop_product_condition"]').val()
+    //     data['shop_product_listing']   = $('[name="shop_product_listing"]').val()
+    //     data['skip']                   = parseInt($('.add-more-shop').attr('data-value'))
+    //     if($('[name="max_price"]').val()!=''){
+    //         data['max_price']              = parseInt($('[name="max_price"]').val().replaceAll(',',''))
+    //     }else{
+    //         data['max_price']              = 0
+    //     }
+    //     if($('[name="min_price"]').val()!=''){
+    //         data['min_price']              = parseInt($('[name="min_price"]').val().replaceAll(',',''))
+    //     }else  {
+    //         data['min_price']              = 0
+    //     }
+    //     if(globalThis.filter_change===true){
+    //         $('.card-ajax-responsive').html('')
+    //         globalThis.filter_change = false
+    //     }
+    //     custom_AJAX({
+    //         TYPE:"POST",
+    //         URL: location.origin+'/api/service_shop_list',
+    //         DATA:data,
+    //         SUCCESS:function (response) {
+    //             if (type==="GET_PRODUCT") {
+    //                 for (var i = 0; i < response.product[0]['photos'].length; i++) {
+    //                     $('.owl-theme').append('<div class="item"><img class="img-pagi" src="'+get_img_src(response.product[0]['photos'][i]['file_url'])+'" style="width:50px;padding:5px;"/></div>')
+    //                 }
+    //                 $('.owl-carousel').owlCarousel({
+    //                     margin: 10,
+    //                     navRewind: false,
+    //                 })
+    //                 $('.owl-carousel').on('click', '.owl-item>div', function () {
+    //                     $('.full-img').attr('src',$(this).find('img').attr('src'))
+    //                 })
+    //                 $('.owl-item>div').eq(0).click()
+    //                 for (var i = 0; i < response['option'].length; i++) {
+    //                     $('[name="'+response['option'][i]['select_name']+'"]').append('<option value="'+response['option'][i]['option_value']+'">'+response['option'][i]['option_name']+'</option>')
+    //                 }
+    //                 $('.full').find('img').attr('src',get_img_src(response.product[0]['photos'][0]['file_url']))
+    //                 $('.product-name').html(response.product[0]['product_name'])
+    //                 $('.product_star').html(get_star(response.product[0]['star']))
+    //                 $('.product_desc').html(response.product[0]['product_desc'])
+    //             }
+    //             if (type==="GET_SHOP_LIST") {
+    //                 shop = response.shop
+    //                 $('.card-ajax-responsive').html('')
+    //                 for (var i = 0; i < shop.length; i++) {
+    //                     html = replace_HTML($('#card_table').html(),{
+    //                         "SHOP_ID"           : shop[i]['product_price'][0]['shop_id']['$oid'],
+    //                         "SHOP_STAR"         : get_star(shop[i]['star']),
+    //                         "SHOP_NAME"         : shop[i]['shop_name'],
+    //                         "FULL_ADDRESS"      : shop[i]['full_address'],
+    //                         "GROLOCATION"       : response.geolocation + shop[i]['latitude'] +','+ shop[i]['longitude'],
+    //                         "DISTANCE"          : toLocaleString(shop[i]['distance'])+' Km',
+    //                         "PRICE_ID"          : shop[i]['product_price'][0]['_id']['$oid'],
+    //                         "FINAL_AMOUNT"      : shop[i]['product_price'][0]['currency']+' '+toLocaleString(shop[i]['product_price'][0]['final_amount']),
+    //                         "MSP"               : shop[i]['product_price'][0]['currency']+' '+toLocaleString(shop[i]['product_price'][0]['shop_product_msp']),
+    //                         "DISCOUNT"          : toLocaleString(shop[i]['product_price'][0]['discount_percentage']),
+    //                     })
+    //                     $('.card-ajax-responsive').append(html)
+    //                 }
+    //                 if (shop.length===10) {
+    //                     $('.add-more-shop').show()
+    //                 }else{
+    //                     $('.add-more-shop').hide()
+    //                 }
+
+    //             }
+    //         }
+    //     })
+    // }
+    function get_product_detail() {
+        product_id = input_GET('product_id') // 'chrome-instant'
+        data = {product_id:product_id};
+        custom_AJAX({
+            TYPE:"POST",
+            URL: location.origin+'/api/service_detail',
+            DATA:data,
+            SUCCESS:function (response) {
+                for (var i = 0; i < response.product[0]['photos'].length; i++) {
+                    $('.owl-theme').append('<div class="item"><img class="img-pagi" src="'+get_img_src(response.product[0]['photos'][i]['file_url'])+'" style="width:50px;padding:5px;"/></div>')
+                }
+                $('.owl-carousel').owlCarousel({
+                    margin: 10,
+                    navRewind: false,
+                })
+                $('.owl-carousel').on('click', '.owl-item>div', function () {
+                    $('.full-img').attr('src',$(this).find('img').attr('src'))
+                })
+                $('.owl-item>div').eq(0).click()
+                for (var i = 0; i < response['option'].length; i++) {
+                    $('[name="'+response['option'][i]['select_name']+'"]').append('<option value="'+response['option'][i]['option_value']+'">'+response['option'][i]['option_name']+'</option>')
+                }
+                $('.full').find('img').attr('src',get_img_src(response.product[0]['photos'][0]['file_url']))
+                $('.product-name').html(response.product[0]['product_name'])
+                $('.product_star').html(get_star(response.product[0]['star']))
+                $('.product_desc').html(response.product[0]['product_desc'])
+y            }
+        })
+    }
+    function get_shop_list() {
+        product_id = input_GET('product_id') // 'chrome-instant'
+        data = {product_id:product_id};
+        data['product_order']             = $('[name="product_order"]').val()
+        data['pincode']                = $('[name="pincode"]').eq(1).val()
+        data['shop_product_condition'] = $('[name="shop_product_condition"]').val()
+        data['shop_product_listing']   = $('[name="shop_product_listing"]').val()
+        data['skip']                   = parseInt($('.add-more-shop').attr('data-value'))
+        if($('[name="max_price"]').val()!=''){
+            data['max_price']              = parseInt($('[name="max_price"]').val().replaceAll(',',''))
+        }else{
+            data['max_price']              = 0
+
+        }
+        if($('[name="min_price"]').val()!=''){
+            data['min_price']              = parseInt($('[name="min_price"]').val().replaceAll(',',''))
+        }else  {
+            data['min_price']              = 0
+        }
+        if(globalThis.filter_change===true){
+            $('.card-ajax-responsive').html('')
+            globalThis.filter_change = false
+        }
+        custom_AJAX({
+            TYPE:"POST",
+            URL: location.origin+'/api/service_shop_list',
+            DATA:data,
+            SUCCESS:function (response) {
+                shop = response.shop
+                $('.card-ajax-responsive').html('')
+                for (var i = 0; i < shop.length; i++) {
+                    html = replace_HTML($('#card_table').html(),{
+                        "SHOP_ID"           : shop[i]['product_price'][0]['shop_id']['$oid'],
+                        "SHOP_STAR"         : get_star(shop[i]['star']),
+                        "SHOP_NAME"         : shop[i]['shop_name'],
+                        "FULL_ADDRESS"      : shop[i]['full_address'],
+                        "GROLOCATION"       : response.geolocation + shop[i]['latitude'] +','+ shop[i]['longitude'],
+                        "DISTANCE"          : toLocaleString(shop[i]['distance'])+' Km',
+                        "PRICE_ID"          : shop[i]['product_price'][0]['_id']['$oid'],
+                        "FINAL_AMOUNT"      : shop[i]['product_price'][0]['currency']+' '+toLocaleString(shop[i]['product_price'][0]['final_amount']),
+                        "MSP"               : shop[i]['product_price'][0]['currency']+' '+toLocaleString(shop[i]['product_price'][0]['shop_product_msp']),
+                        "DISCOUNT"          : toLocaleString(shop[i]['product_price'][0]['discount_percentage']),
+                    })
+                    $('.card-ajax-responsive').append(html)
+                }
+                if (shop.length===10) {
+                    $('.add-more-shop').show()
+                }else{
+                    $('.add-more-shop').hide()
+                }
+
+            }
+        })
+
+    }
+    $('.get-shop-listing').click(function () {
+        $('.add-more-shop').attr('data-value',0).show()
+        get_shop_list()
+    })
+    $('.add-more-shop').click(function () {
+        $('.add-more-shop').attr('data-value',10+parseInt($('.add-more-shop').attr('data-value')))
+        get_shop_list()
+    })
+
+  $(document).on('click','.add-to-cart',function(e,d){
+      data = {TYPE:"ADD_TO_CART",product_price_id:e.target.attributes['data-price-id'].nodeValue}
+      custom_AJAX({
+        TYPE:"POST",
+        URL: location.origin+'/api/add_to_cart',
+
+          DATA:data,
+          SUCCESS:function (response) {
+          }
+      })
+  })
+
+  $('#form_query').submit(function(e){
+    e.preventDefault()
+    data = {TYPE:"SEND_QUERY"}
+    data['product_price_id'] = $('#form_query').find('[name="product_price_id"]').val()
+    data['query'] = $('#form_query').find('[name="query"]').val()
+    custom_AJAX({
+        TYPE:"POST",
+        URL: location.origin+'/api/user_send_query',
+        DATA:data,
+        SUCCESS:function (response) {
+
+        }
+    })
+  })
+
+  $('.product_filter').submit(function(e){
+    e.preventDefault()
+    $('.add-more-shop').attr('data-value',0).show()
+    get_shop_list()
+  })
+
+  $(document).ready(function(){
+    $('a[data-full]').click(function(){
+      var largeImage = $(this).find('img').attr('src');
+      $('.selected').removeClass();
+      $(this).addClass('selected');
+      $('.full-img').hide();
+      $('.full-img').attr('src', largeImage);
+      $('.full-img').fadeIn();
+    });
+    $('.full-img').on('click', function(){
+      var modalImage = $(this).attr('src');
+      $.fancybox.open(modalImage);
+    });
+    $('a[data-full]').eq(0).click()
+  });
+  function send_query(_this) {
+    $('[id="exampleModal"]').modal('show')
+    $('.ajax-message-div').hide()
+    $('[id="message-text"]').val('')
+    $(".model_shop_name").html(_this.parent().parent().find('.shop_name').html())
+    $('[name="product_price_id"]').val(_this.attr('data-price-id'))
+  }
+  function close_model(_this) {
+    $('[id="exampleModal"]').modal('hide')
+  }
+$(document).ready(function () {
+    update_geolocation()
+    get_product_detail()
+    get_shop_list()
+    // $('.get-shop-listing').click()
+})
+
+</script>
+{% endblock %}

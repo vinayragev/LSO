@@ -1,0 +1,54 @@
+{% extends "admin/layout.html" %}
+
+{% load static %}
+{% block title %}Add Category{% endblock %}
+{% block main %}
+<div class="row mb-8">
+	<div class="card">
+		<div class="card-body">
+			<div class="mb-6">
+				<h4 class="mb-1">Category</h4>
+			</div>
+			<form class="needs-validation" method="POST">
+				{% include 'admin/category/form.html' %}
+				<button type="submit" class="btn btn-primary cat-submit-button submit-button"></button>
+			</form>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+    csrfmiddlewaretoken = '{{ csrf_token }}'
+    $('.needs-validation').submit(function (e) {
+    	e.preventDefault()
+		custom_AJAX({
+			TYPE:"POST",
+			URL: location.origin+'/api/admin/category/add',
+			DATA:{TYPE:'ADD_CATEGORY',parent_id:$('[name="parent_id"]').val(),category_name:$('[name="category_name"]').val(),active:$('[name="active"]').val()},
+			SUCCESS:function (response) {
+				if (response.url) {
+					$('.ajax-msg').html(response.message).attr('class','btn btn-'+response.type)
+				}
+			}
+		});
+    })
+	custom_AJAX({
+		TYPE:"POST",
+		URL: location.origin+'/api/admin/category/form',
+		DATA:{page_name:'category_form'},
+		SUCCESS:function (response) {
+			label = response.LANG_TEXT.label
+			$('.step-anchor').show().prepend('<li class="done"><a class="arrow-link" href="{{ url_category_list }}">'+response.LANG_TEXT.page_heading+'</a></li>')
+			$('.page-heading').html(response.LANG_TEXT.heading['edit'][0])
+			$('.cat-submit-button').html(response.LANG_TEXT.btn['add'][0])
+			label_keys = Object.keys(label)
+			for (var i = 0; i < label_keys.length; i++) {
+				$('[name="'+label_keys[i]+'"]').attr('placeholder',label[label_keys[i]])
+				$('.label-'+label_keys[i]+'').html(label[label_keys[i]])
+			}
+		}
+	});
+
+
+</script>
+{% endblock %}

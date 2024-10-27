@@ -1,0 +1,142 @@
+<div class="mb-3 row">
+	<label class="col-sm-4 col-form-label form-label label-category_id"></label>
+	<div class="col-md-8 col-12">
+		<select class="form-select chosen-select" name="category_id">
+			<option value=""></option>
+			<option value=""></option>
+			<option value=""></option>
+			<option value=""></option>
+			<option value=""></option>
+			<option value=""></option>
+			<option value=""></option>
+			<option value=""></option>
+			<option value=""></option>
+			<option value=""></option>
+		</select>
+	</div>
+</div>
+<div class="mb-3 row">
+	<label class="col-sm-4 col-form-label form-label label-product_name"></label>
+	<div class="col-md-8 col-12">
+		<input type="text" class="form-control" required="" name="product_name">
+	</div>
+</div>
+<div class="mb-3 row">
+	<label class="col-sm-4 col-form-label form-label label-product_code_name"></label>
+	<div class="col-md-8 col-12">
+		<input type="text" class="form-control" required="" name="product_code_name">
+	</div>
+</div>
+<div class="mb-3 row">
+	<label class="col-sm-4 col-form-label form-label label-product_manufacturer"></label>
+	<div class="col-md-8 col-12">
+		<input type="text" class="form-control" required="" name="product_manufacturer">
+	</div>
+</div>
+<div class="mb-3 row">
+	<label class="col-sm-4 col-form-label form-label label-product_desc"></label>
+	<div class="col-md-8 col-12">
+		<textarea type="text" class="form-control" required="" name="product_desc"></textarea>
+	</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row mb-8">
+	<div class="col-xl-3 col-lg-4 col-md-12 col-12">
+		<div class="mb-4 mb-lg-0">
+			<h4 class="mb-1">Preferences</h4>
+			<p class="mb-0 fs-5 text-muted">Configure your input </p>
+		</div>
+	</div>
+	<div class="col-xl-9 col-lg-8 col-md-12 col-12">
+		<div class="card" id="preferences">
+			<div class="card-body">
+				<div class="mb-6">
+					<h4 class="mb-1 form-heading"></h4>
+				</div>
+				<div class="mb-3 row">
+					<label class="col-sm-4 col-form-label form-label label-product_photo"></label>
+					<div class="col-md-8 col-12">
+						<div style="display:none">
+							<input type="file" class="product_photo" name="">
+						</div>
+						<div class="jquery-uploader">
+							<div class="jquery-uploader-preview-container">
+								<div class="jquery-uploader-select-card">
+					                <div class="jquery-uploader-select">
+					                    <div onclick="$('.product_photo').eq(0).click()" class="upload-button">
+					                        <i class="fa fa-plus"></i><br>
+					                        <a >Upload</a>
+					                    </div>
+					                </div>
+					            </div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row mb-8">
+	<div class="col-xl-3 col-lg-4 col-md-12 col-12">
+		<div class="mb-4 mb-lg-0">
+			<h4 class="mb-1">Preferences</h4>
+			<p class="mb-0 fs-5 text-muted">Configure your input </p>
+		</div>
+	</div>
+	<div class="col-xl-9 col-lg-8 col-md-12 col-12">
+
+		<div class="card" id="preferences">
+			<div class="card-body">
+				<div class="mb-6">
+					<h4 class="mb-1 form-heading"></h4>
+				</div>
+				<div class="mb-3 row">
+					<label class="col-sm-4 col-form-label form-label label-active"></label>
+					<div class="col-md-8 col-12">
+						<select class="form-select" name="active">
+							<option value="1">Active</option>
+							<option value="0">Not Active</option>
+						</select>
+					</div>
+				</div>
+				<input class="form-control" type="hidden" name="photo">
+				<div class="mb-3 row ajax-message-div" style="display: None;">
+					<div class="alert alert-success alert-dismissible fade show" role="alert">
+						<span class="ajax-message"></span>
+						<span class="btn-close" onclick="$('.ajax-message-div').hide()" aria-label="Close"></span>
+					</div>
+				</div>
+				<input type="hidden" name="product_photo" value="">
+<script type="text/javascript">
+	$('[type="file"]').change(function () {
+		_this = $(this)
+		data = {product_id:"{{product_id}}",TYPE:"UPLOAD_PRODUCT_PHOTO",product_photo:_this[0].files[0]}
+		custom_AJAX({
+			TYPE:"POST",
+			URL: location.href,
+			DATA:data,
+			SUCCESS:function (response) {
+				if (response.file_name) {
+					$('.jquery-uploader-preview-container').prepend('<div class="jquery-uploader-card"><div class="jquery-uploader-preview-main"><div class="jquery-uploader-preview-action"><ul><li class="file-delete"><i class="fa fa-trash-o" onclick="$(\'.jquery-uploader-card\').remove()" data-id=""></i></li></ul></div><img alt="preview"  class="files_img" src="'+get_img_src(response.file_name)+'"></div></div>')
+					$('[name="product_photo"]').val($('[name="product_photo"]').val()+','+response.file_name)
+				}
+			}
+		},true);
+	})
+	function delete_product_photo(_this) {
+		data = {TYPE:"DELETE_PHOTO",product_photo_id:_this.attr('data-img-id'),product_id:$('[name="product_id"]').val()}
+		file_url = _this.attr('data-img-id')
+		custom_AJAX({
+			TYPE:"POST",
+			URL: location.href,
+			DATA:data,
+			SUCCESS:function (response) {
+				_this.closest('.jquery-uploader-card').remove()
+			}
+		});
+	}
+</script>

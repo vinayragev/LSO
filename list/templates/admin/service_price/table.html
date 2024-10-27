@@ -1,0 +1,158 @@
+{% extends "admin/layout.html" %}
+{% block title %}Product Price{% endblock %}
+
+{% load static %}
+{% block main %}
+<link href="{% static 'pagination/simplePagination.css' %}" rel="stylesheet">
+<script type="text/javascript" src="{% static 'pagination/jquery.simplePagination.js' %}"></script>
+<main>
+	
+
+	<div class="row mb-6">
+		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+			<div class="tab-content" id="pills-tabContent-table">
+				<div class="card">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-md-3 mb-3 text-center">
+								<img style="height: 300px;max-width: 100%;" class="product-img" src="" alt="Card image cap">
+							</div>
+							<div class="col-md-9 mb-3">
+								<h5 class="card-title product-title">amd 7000 series ryzen 9 7900x</h5>
+								<p class="card-text product-text">amd | 100-100000589wof</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row mb-6">
+		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+			<div class="tab-content p-4" id="pills-tabContent-table">
+				<div class="card">
+					<div class="card-body">
+						<table class="table">
+							<thead>
+								<tr>
+									<th>Shop Name</th>
+									<th>Updated</th>
+									<th>LSP</th>
+									<th>MSP</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+							<tbody class="card-ajax-table"></tbody>
+							<tfoot>
+								<tr>
+									<th>Shop Name</th>
+									<th>Updated</th>
+									<th>LSP</th>
+									<th>MSP</th>
+									<th>Action</th>
+								</tr>
+							</tfoot>
+						</table>
+						<div id="light-pagination" class="pagination"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</main>
+
+<div style="display: none;" id="action_table">
+	<div class="row text-center">
+		<div class="col">
+			<form method="POST" action="{{edit}}">
+				<input type="hidden" name="price_id" value="PRICE_ID">
+				<input type="hidden" name="csrfmiddlewaretoken" value="{{csrf_token}}">
+				<span class="btn btn-primary listing-btn"  onclick="$(this).parent().submit()">Edit</span>
+				<span class="btn btn-danger listing-btn" data-id="PRICE_ID" onclick="delete_product($(this))">Delete</span>
+			</form>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	$('.page-heading-btn').html('<a href="{{add}}" class="listing-btn btn btn-sm btn-primary"></a>')
+	currentPage = 1
+	function get_data() {
+		data= {TYPE:'GET_PRODUCT'}
+		data['product_id'] = input_GET('product_id')
+		data['skip'] = (globalThis.currentPage-1)*10
+
+		if ($('[name="search"]').val().trim()!=='') {
+			data['search'] = $('[name="search"]').val()
+		}
+		return data;
+	}
+	$('[name="shop_id"]').change(function () {
+		console.log(get_data())
+		get_price_ajax(get_data())
+	})
+	$('[name="search"]').keyup(function () {
+		if (typeof objTimeout !=='undefined') {
+			clearTimeout(objTimeout)
+		}
+		objTimeout = setTimeout(function () {
+			get_price_ajax(get_data())
+		},1000)
+	})
+	function get_price_ajax(data){
+		custom_AJAX({
+			TYPE:"POST",
+			URL: location.origin+'/api/admin/service/price/table',
+			DATA:data,
+			SUCCESS:function (response) {
+				listing = response.listing
+				count = response.count_shop_product
+				$('#light-pagination').pagination({
+					pages: Math.ceil(count/10),
+					currentPage: globalThis.currentPage,
+					cssStyle: 'light-theme',
+					onPageClick: function (a,b) {
+						globalThis.currentPage = a
+						get_price_ajax(get_data())
+					}
+				});
+				$('.card-ajax-table').html('')
+				$('.step-anchor').show()
+				$('.page-heading').html('Product Price')
+				for (var i = 0; i < $('.listing-btn').length; i++) {
+					$('.listing-btn').eq(i).html(response.LANG_TEXT.btn[i])
+				}
+				$('.product-img').attr('src',get_img_src(response['product'][0]['photo'][0]['file_url']))
+				$('.product-title').html(response['product'][0]['product_name'])
+				$('.product-text').html(response['product'][0]['product_manufacturer'])
+				for (var i = 0; i < response['option'].length; i++) {
+					$('[name="'+response['option'][i]['select_name']+'"]').append('<option value="'+response['option'][i]['option_value']+'">'+response['option'][i]['option_name']+'</option>')
+				}
+				for (var i = 0; i < listing.length; i++) {
+					dif = get_time_diff(listing[i]['updated_at']['$date'])
+					html = ''
+					html+='<td><a href="/admin/price/list?shop_id='+listing[i]['shop'][0]['_id']['$oid']+'">'+listing[i]['shop'][0]['shop_name']+'</a></td>'
+					html+='<td>'+dif[0][0]+' '+dif[0][1]+'</td>'
+					html+='<td>'+listing[i]['currency']+' '+toLocaleString(listing[i]['final_amount'])+'</td>'
+					html+='<td><del class="btn btn-sm btn-light">'+listing[i]['currency']+' '+toLocaleString(listing[i]['shop_product_msp'])+"</del></td>"
+					html+='<td>'+replace_HTML($('#action_table').html(),{"PRICE_ID":listing[i]['_id']['$oid']})+'</td>'
+					$('.card-ajax-table').append("<tr>"+html+"</tr>")
+				}
+			}		
+		})
+	}
+	function ObjectId(_this) {
+		return _this
+	}
+	function delete_product(_this) {
+		custom_AJAX({
+			TYPE:"POST",
+			URL: location.origin+'/api/admin/service/price/delete',
+			DATA:{price_id:_this.attr('data-id')},
+			SUCCESS:function (response) {
+				_this.closest('tr').remove()
+			}
+		});
+	}
+	get_price_ajax(get_data())
+</script>
+{% endblock %}

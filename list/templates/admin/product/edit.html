@@ -1,0 +1,138 @@
+{% extends "admin/layout.html" %}
+{% load static %}
+{% block title %}Edit Product{% endblock %}
+
+{% block main %}
+<link rel="stylesheet" type="text/css" href="{% static 'ajax-file-uploader/css/jquery.uploader.css' %}">
+<script type="text/javascript" src="{% static 'ajax-file-uploader/dist/jquery.uploader.min.js' %}"></script>
+
+<div class="row mb-6">
+	<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+		<div class="card">
+			<div class="tab-content p-4" id="pills-tabContent-table">
+				<form class="needs-validation" method="POST">
+					{% include 'admin/product/form.html' %}
+					<button type="submit" class="btn btn-primary cat-submit-button submit-button"></button>
+      		<input type="hidden" name="product_id" value="{{ product_id }}">
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+{% load static %}
+
+<script type="text/javascript">
+	defaultValue= []
+	csrfmiddlewaretoken = '{{ csrf_token }}'
+	$('.needs-validation').submit(function (e) {
+		e.preventDefault()
+		data = {
+			TYPE                 : 'UPDATE_PRODUCT',
+			active               : $('[name="active"]').val(),
+			product_name         : $('[name="product_name"]').val(),
+			product_code_name    : $('[name="product_code_name"]').val(),
+			product_manufacturer : $('[name="product_manufacturer"]').val(),
+			product_desc         : $('[name="product_desc"]').val(),
+			product_qty_type     : $('[name="product_qty_type"]').val(),
+			product_qty          : $('[name="product_qty"]').val(),
+			product_photo        : $('[name="product_photo"]').val(),
+			category_id          : $('[name="category_id"]').val(),
+			product_id           : $('[name="product_id"]').val()
+		}
+		custom_AJAX({
+			TYPE:"POST",
+			URL: location.origin+'/api/admin/product/edit',
+			DATA:data,
+			SUCCESS:function (response) {
+			}
+		});
+	})
+	custom_AJAX({
+		TYPE:"POST",
+		URL: location.origin+'/api/admin/product/form',
+		DATA:{product_id:'{{product_id}}',TYPE:"GET_PRODUCT"},
+		SUCCESS:function (response) {
+			form_text = response.LANG_TEXT.label
+			$('.step-anchor').show().prepend('<li class="done"><a class="arrow-link" href="{{ url_product_list }}">'+response.LANG_TEXT.page_heading+'</a></li>')
+			$('.page-heading').html(response.LANG_TEXT.heading['edit'][0])
+			$('.cat-submit-button').html(response.LANG_TEXT.btn['edit'][0])
+			form_text_keys = Object.keys(form_text)
+			for (var i = 0; i < form_text_keys.length; i++) {
+				$('[name="'+form_text_keys[i]+'"]').attr('placeholder',form_text[form_text_keys[i]])
+				$('.label-'+form_text_keys[i]+'').html(form_text[form_text_keys[i]])
+			}
+			for (var i = 0; i < response['option'].length; i++) {
+				$('[name="'+response['option'][i]['select_name']+'"]').append('<option value="'+response['option'][i]['option_value']+'">'+response['option'][i]['option_name']+'</option>')
+			}
+			for (var i = 0; i < response.product[0].photos.length; i++) {
+				$('.jquery-uploader-preview-container').prepend('<div class="jquery-uploader-card"><div class="jquery-uploader-preview-main"><div class="jquery-uploader-preview-action"><ul><li class="file-delete"><i class="fa fa-trash-o" data-img-id="'+response.product[0].photos[i]._id.$oid+'" onclick="delete_product_photo($(this))" data-id=""></i></li></ul></div><img alt="preview"  class="files_img" src="'+get_img_src(response.product[0].photos[i].file_url)+'"></div></div>')
+			}
+			$("#demo1").uploader({multiple: true, ajaxConfig: ajaxConfig,autoUpload: true,
+				defaultValue: defaultValue
+			})
+			$('[name="product_id"]').val(response.product[0]._id.$oid)
+			$('[id="categorys"]').html('<option value="'+response.product[0].category_id+'" selected>'+response.product[0].category_id+'</option>')
+			$('[name="category_id"]').val(response.product[0].category_id)
+			$('[name="product_desc"]').val(response.product[0].product_desc)
+			$('[name="product_name"]').val(response.product[0].product_name)
+			$('[name="product_code_name"]').val(response.product[0].product_code_name)
+			$('[name="active"]').val(response.product[0].active)
+			$('[name="product_qty"]').val(response.product[0].product_qty)
+			$('[name="product_qty_type"]').val(response.product[0].product_qty_type)
+			$('[name="product_manufacturer"]').val(response.product[0].product_manufacturer)
+		}
+	})
+	let ajaxConfig = {
+		ajaxRequester: function (config, uploadFile, pCall, sCall, eCall) {
+			let progress = 0
+			let interval = setInterval(() => {
+				progress += 10;
+				pCall(progress)
+				if (progress >= 100) {
+					clearInterval(interval)
+					const windowURL = window.URL || window.webkitURL;
+					sCall({
+						data: windowURL.createObjectURL(uploadFile.file)
+					})
+				}
+			}, 300)
+		}
+	}
+
+</script>
+  <script type="text/javascript" src="{% static 'wysiwyg-editor-master/js/froala_editor.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'wysiwyg-editor-master/js/plugins/align.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'wysiwyg-editor-master/js/plugins/code_beautifier.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'wysiwyg-editor-master/js/plugins/code_view.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'wysiwyg-editor-master/js/plugins/draggable.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'wysiwyg-editor-master/js/plugins/image.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'wysiwyg-editor-master/js/plugins/image_manager.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'wysiwyg-editor-master/js/plugins/link.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'wysiwyg-editor-master/js/plugins/lists.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'wysiwyg-editor-master/js/plugins/paragraph_format.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'wysiwyg-editor-master/js/plugins/paragraph_style.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'wysiwyg-editor-master/js/plugins/table.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'wysiwyg-editor-master/js/plugins/video.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'wysiwyg-editor-master/js/plugins/url.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'wysiwyg-editor-master/js/plugins/entities.min.js' %}"></script>
+
+  <script>
+    (function () {
+      const editorInstance = new FroalaEditor('#edit', {
+        enter: FroalaEditor.ENTER_P,
+        placeholderText: null,
+        events: {
+          initialized: function () {
+            const editor = this
+            this.el.closest('form').addEventListener('submit', function (e) {
+              console.log(editor.$oel.val())
+              e.preventDefault()
+            })
+          }
+        }
+      })
+    })()
+  </script>
+{% endblock %}

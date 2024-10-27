@@ -1,0 +1,109 @@
+{% extends "home/shop/layout.html" %}
+{% load static %}
+{% block title %}Query Details{% endblock %}
+
+{% block main %}
+<link rel="stylesheet" href="{% static 'assets/css/home.css' %}">
+<div class="container">
+  
+<div class="py-6" data-category="#order">
+  <div class="row">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-12 mb-6">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-4">
+              <h5>Shop Name</h5>
+              <p class="shop_name"></p>
+            </div>
+            <div class="col-md-4">
+              <h5>Shop Address</h5>
+              <p class="shop_address"></p>
+            </div>
+            <div class="col-md-4">
+              <h5>Product Name</h5>
+              <p class="product_name"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<br>
+<div class="py-6" data-category="#order">
+  <div class="row">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-12 mb-6">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Message</h4>
+            <div class="query_message"></div>
+            <form id="REPLAY">
+                <textarea class="form-control" name="replay"></textarea>
+                <input type="submit" value="submit">
+            </form>
+          <!-- <div class="card-text "></div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<script type="text/javascript">
+    query_id = input_GET('query_id')
+    custom_AJAX({
+        TYPE:"POST",
+        URL: location.origin+"/api/user_query_detail",
+        DATA:{TYPE:"GET_QUERY_DETAIL",query_id:query_id},
+        SUCCESS:function (response) {
+            shop = response.query[0].shop[0]
+            product = response.query[0].product[0]
+            $('.product_name').html(product['product_name'])
+            $('.shop_name').html(shop['shop_name'])
+            $('.shop_address').html(shop['full_address'])
+            $('.query_message').html('')
+            for (var i = 0; i < response.query[0].message.length; i++) {
+              if (response.query[0].message[i].user[0]['user_id']=={{ request.user.id }}) {
+                float = "right"
+              }else{
+                float = "left"
+              }
+              if (float==='left') {
+                  $('.query_message').prepend('<p style="text-align:'+float+'"><span class="btn btn-sm btn-dark">'+response.query[0].message[i].user[0]['name']+'</span><span class="btn btn-sm btn-light">'+response.query[0].message[i].query+'</span><br><small>'+get_time(response.query[0].message[i]['created_at']["$date"])+'</small></p>')
+              }else{
+                  $('.query_message').prepend('<p style="text-align:'+float+'"><span class="btn btn-sm btn-light">'+response.query[0].message[i].query+'</span><span class="btn btn-sm btn-dark">'+response.query[0].message[i].user[0]['name']+'</span><br><small>'+get_time(response.query[0].message[i]['created_at']["$date"])+'</small></p>')
+              }
+            }
+        }
+  })
+
+    $('#REPLAY').submit(function (e) {
+        e.preventDefault()
+        custom_AJAX({
+            TYPE:"POST",
+            URL: location.origin+"/api/user_query_replay",
+            DATA:{TYPE:"REPLAY",query_id:query_id,replay:$('[name="replay"]').val()},
+            SUCCESS:function (response) {
+                $('[name="replay"]').val('')
+                $('.cart_query').html('')
+                message = response.message
+                $('.query_message').html('')
+                for (var i = 0; i < response.message.length; i++) {
+                  if (response.message[i].user[0]['user_id']=={{ request.user.id }}) {
+                    float = "right"
+                  }else{
+                    float = "left"
+                  }
+if (float==='left') {
+    $('.query_message').prepend('<p style="text-align:'+float+'"><span class="btn btn-sm btn-dark">'+response.message[i].user[0]['name']+'</span><span class="btn btn-sm btn-light">'+response.message[i].query+'</span><br><small>'+get_time(response.message[i]['created_at']["$date"])+'</small></p>')
+}else{
+    $('.query_message').prepend('<p style="text-align:'+float+'"><span class="btn btn-sm btn-light">'+response.message[i].query+'</span><span class="btn btn-sm btn-dark">'+response.message[i].user[0]['name']+'</span><br><small>'+get_time(response.message[i]['created_at']["$date"])+'</small></p>')
+}
+                }
+            }
+        })
+    })
+
+
+</script>
+{% endblock %}

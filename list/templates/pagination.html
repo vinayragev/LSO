@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>pure-paginator demo</title>
+  <style>
+    html {
+      font-family: Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      padding: 0 20%;
+      background-color: #161616;
+      color: #ffffff;
+    }
+
+    h1,
+    h2 {
+      width: 100%;
+      text-align: center;
+    }
+
+    h3 {
+      margin: 0;
+      align-self: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .example-wrapper {
+      margin-top: 50px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px 0;
+    }
+
+    .content-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 10px 0;
+      width: 320px;
+      background-color: #ffffff;
+      color: #000000;
+      padding: 10px;
+      border-radius: 12px;
+      align-items: center;
+    }
+
+    .div-pagination-wrapper button.active,
+    button:hover {
+      cursor: pointer;
+    }
+
+    table {
+      border-collapse: collapse;
+      border-spacing: 0;
+      box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
+      width: 80%;
+    }
+
+    table thead {
+      color: #ffffff;
+      text-align: left;
+    }
+
+    table thead tr th {
+      background-color: #3944bc;
+    }
+
+    table thead th,
+    td {
+      padding: 5px 8px;
+    }
+
+    table thead th:first-child {
+      border-top-left-radius: 6px;
+    }
+
+    table thead th:last-child {
+      border-top-right-radius: 6px;
+    }
+
+    table tbody tr:nth-of-type(even) td {
+      background-color: #cccccc;
+    }
+
+    .table-pagination-wrapper {
+      background-color: #000000;
+      padding: 4px;
+      border-radius: 4px;
+    }
+
+    .table-pagination-wrapper {
+      gap: 0 5px;
+    }
+
+    .table-pagination-wrapper .pagination-site-number-wrapper {
+      gap: 0 5px;
+    }
+
+    .table-pagination-wrapper button,
+    .pagination-placeholder {
+      width: 24px;
+      height: 24px;
+      background-color: unset;
+      border: unset;
+      color: #ffffff;
+      border-radius: 4px;
+    }
+
+    .table-content-wrapper .table-pagination-wrapper button.active,
+    .table-content-wrapper .table-pagination-wrapper button:hover {
+      background-color: #2e3033;
+    }
+
+    .table-pagination-wrapper button.active {
+      cursor: unset;
+      background-color: #161616;
+    }
+
+    .div-body {
+      box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
+    }
+
+    .div-row {
+      display: flex;
+      justify-content: space-around;
+      text-align: center;
+      padding: 5px 8px;
+      gap: 0 30px;
+    }
+
+    .div-row div {
+      flex: 1;
+      white-space: nowrap;
+    }
+
+    .div-row:nth-of-type(odd) {
+      background-color: #cccccc;
+    }
+
+    .div-pagination-wrapper .pagination-placeholder {
+      color: #000000;
+    }
+
+    .div-pagination-wrapper button.active {
+      background-color: #000000;
+      color: #ffffff;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>pure-paginator demo</h1>
+  <h2>Pure javascript list paginator</h2>
+  <div class="example-wrapper">
+    <div class="content-wrapper table-content-wrapper">
+      <h3>Table example:</h3>
+      <table>
+        <thead>
+          <th>id</th>
+          <th>name</th>
+          <th>number</th>
+        </thead>
+        <tbody class="table-body" data-table-index="0">
+        </tbody>
+      </table>
+      <div class="table-pagination-wrapper">
+      </div>
+      <button class="add-ten-table-rows-button">Add 10 rows</button>
+    </div>
+    <div class="content-wrapper">
+      <h3>Div example:</h3>
+      <div class="div-body">
+      </div>
+      <div class="div-pagination-wrapper" data-div-index="0">
+      </div>
+      <button class="add-ten-div-rows-button">Add 10 rows</button>
+    </div>
+  </div>
+</body>
+
+<script type="module">
+    {% load static %}
+  import { Pagination } from "{% static 'pure-paginator-main/dist/pure-paginator.js' %}";
+
+  function buildTableData(int) {
+    const iInt = Number(document.querySelector(".table-body").getAttribute('data-table-index'));
+    const newIndex = Number(int) + Number(iInt);
+    for (let i = iInt; i < newIndex; i++) {
+      const tdNr = document.createElement('td');
+      tdNr.innerHTML = Number(i) + 1;
+
+      const tdName = document.createElement('td');
+      tdName.innerHTML = `Data ${i}`;
+
+      const tdNumber = document.createElement('td');
+      tdNumber.innerHTML = i * 33;
+
+      const tr = document.createElement('tr');
+      tr.append(tdNr, tdName, tdNumber);
+
+      document.querySelector(".table-body").append(tr);
+    }
+    document.querySelector(".table-body").setAttribute('data-table-index', newIndex);
+  }
+
+  function buildDivData(int) {
+    const iInt = Number(document.querySelector(".div-body").getAttribute('data-div-index'));
+    const newIndex = Number(int) + Number(iInt);
+    for (let i = iInt; i < newIndex; i++) {
+      const tdNr = document.createElement('div');
+      tdNr.innerHTML = Number(i) + 1;
+
+      const tdName = document.createElement('div');
+      tdName.innerHTML = `Data ${i}`;
+
+      const tdNumber = document.createElement('div');
+      tdNumber.innerHTML = i * 33;
+
+      const tr = document.createElement('div');
+      tr.classList.add('div-row')
+      tr.append(tdNr, tdName, tdNumber);
+
+      document.querySelector(".div-body").append(tr);
+    }
+    document.querySelector(".div-body").setAttribute('data-div-index', newIndex);
+  }
+
+
+  document.addEventListener("DOMContentLoaded", () => {
+    buildTableData(40);
+
+    let tablePagination = new Pagination(
+      document.querySelector(".table-body"),
+      document.querySelector(".table-pagination-wrapper"),
+      1,
+      10
+    );
+
+    document.querySelector('.add-ten-table-rows-button').addEventListener('click', () => {
+      buildTableData(10);
+      tablePagination.reindexPagination();
+    });
+
+
+    buildDivData(40);
+
+    let divPagination = new Pagination(
+      document.querySelector(".div-body"),
+      document.querySelector(".div-pagination-wrapper"),
+      1,
+      10
+    );
+
+    document.querySelector('.add-ten-div-rows-button').addEventListener('click', () => {
+      buildDivData(10);
+      divPagination.reindexPagination();
+    });
+  });
+</script>
+
+</html>

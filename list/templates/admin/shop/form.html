@@ -1,0 +1,223 @@
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="label-shop_name"></label>
+                <input type="text" class="form-control" name="shop_name" required>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="label-owner_full_name"></label>
+                <input type="text" class="form-control" name="owner_full_name" required>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label class="label-currency"></label>
+                <input type="text" class="form-control" name="currency" required>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label class="label-shop_type"></label>
+                <input list="shop_type" autocomplete="off" class="form-select" name="shop_type">
+                <datalist id="shop_type">
+                </datalist>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label class="label-open_since"></label>
+                <input type="text" class="form-control" name="open_since" required>
+            </div>
+
+            <div class="col-md-12 mb-3">
+                <label class="label-info"></label>
+                <textarea class="form-control" name="info" required></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card" style="margin-top: 25px;">
+    <div class="tab-content p-4">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="label-mobile"></label>
+                <input type="text" class="form-control" name="mobile" required>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="label-email"></label>
+                <input type="email" class="form-control" name="email" required>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card" style="margin-top: 25px;">
+    <div class="tab-content p-4">
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label class="label-country"></label>
+                <select class="form-select" name="country" required>
+                    <option value="">Select Country</option>
+                </select>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label class="label-pincode"></label>
+                <input type="text" class="form-control" name="pincode" required>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label class="label-state"></label>
+                <input type="text" class="form-control" name="state" required>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label class="label-city"></label>
+                <input type="text" class="form-control" name="city" required>
+            </div>
+            <div class="col-md-8 mb-3">
+                <label class="label-full_address"></label>
+                <input type="text" class="form-control" name="full_address" required>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="label-latitude"></label>
+                <input type="text" class="form-control" name="latitude">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="label-longitude"></label>
+                <input type="text" class="form-control" name="longitude">
+            </div>
+        </div>
+        <span class="spinner-border" style="display:none;" role="status"></span>
+        <span class="btn btn-dark get_current_location"> <i class="fa fa-location-arrow" aria-hidden="true"></i></span>
+        <a class="btn btn-dark" id="map" target="_blank" href=""> <i class="fa fa-map" aria-hidden="true"></i></a>
+    </div>
+</div>
+<div class="card" style="margin-top: 25px;">
+    <div class="tab-content p-4">
+        <div class="row">
+            <div class="col-md-4">
+                <label class="label">Day</label>
+            </div>
+            <div class="col-md-4">
+                <label class="label">Open</label>
+            </div>
+            <div class="col-md-4">
+                <label class="label">Close</label>
+            </div>
+            {% for x in dayNames %}
+            <div class="col-md-4">
+                <label class="label">{{x}}</label>
+            </div>
+            <div class="col-md-4">
+                <input type="time" class="form-control open_time">
+            </div>
+            <div class="col-md-4">
+                <input type="time" class="form-control close_time">
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<div class="card" style="margin-top: 25px;">
+    <div class="tab-content p-4">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="label-banner"></label>
+                <div style="display:none">
+                    <input type="hidden" name="banner">
+                    <input type="file" class="banner">
+                </div>
+                <div class="jquery-uploader">
+                    <div class="jquery-uploader-preview-container" data-name="banner">
+                        <div class="jquery-uploader-select-card">
+                            <div class="jquery-uploader-select">
+                                <div onclick="$('.banner').eq(0).click()" class="upload-button">
+                                    <i class="fa fa-plus"></i><br>
+                                    <a >Upload</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="label-photo"></label>
+                <div style="display:none">
+                    <input type="hidden" name="photo">
+                    <input type="file" class="photo">
+                </div>
+                <div class="jquery-uploader">
+                    <div class="jquery-uploader-preview-container" data-name="photo">
+                        <div class="jquery-uploader-select-card">
+                            <div class="jquery-uploader-select">
+                                <div onclick="$('.photo').eq(0).click()" class="upload-button">
+                                    <i class="fa fa-plus"></i><br>
+                                    <a >Upload</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card" style="margin-top: 25px;">
+    <div class="tab-content p-4">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="label-active"></label>
+                <select class="form-select" name="active" required>
+                    <option value="1">Activate</option>
+                    <option value="0">Deactivate</option>
+                </select>
+            </div>
+        </div>
+        <div class="mb-3 row ajax-message-div" style="display: None;">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <span class="ajax-message"></span>
+                <span class="btn-close" onclick="$('.ajax-message-div').hide()" aria-label="Close"></span>
+            </div>
+        </div>
+        <input type="hidden" name="open_time">
+        <input type="hidden" name="close_time">
+        <script type="text/javascript">
+            $('[name="shop_type"]').keyup(function () {
+                custom_AJAX({
+                    TYPE:"POST",
+                    URL: location.origin+"/api/admin/shop/type",
+                    DATA:{search:$('[name="shop_type"]').val().toLowerCase()},
+                    SUCCESS:function (response) {
+                        shop_type = response.shop
+                        $('[id="shop_type"]').html('')
+                        for (var i = 0; i < shop_type.length; i++) {
+                            if (shop_type[i].shop_type) {
+                                $('[id="shop_type"]').append('<option value="'+shop_type[i].shop_type+'">'+shop_type[i].shop_type+'</option>')
+                            }
+                        }
+                    }
+                })
+            });
+            $('.get_current_location').click(function () {
+                $(".spinner-border").show()
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function (argument) {cur_location = argument;
+                        $(".spinner-border").hide()
+                        $('[name="latitude"]').val(argument.coords.latitude)
+                        $('[name="longitude"]').val(argument.coords.longitude)
+                        $('#map').attr('href','https://www.google.com/maps?q='+argument.coords.latitude+','+argument.coords.longitude)
+                    });
+                }
+            })
+            $('[type="file"]').change(function () {
+                _this = $(this)
+                data = {shop_id:"{{shop_id}}",TYPE:"UPDATE_SHOP_FILE"}
+                data[_this.prev().attr('name')] = _this[0].files[0]
+                console.log(data)
+                custom_AJAX({
+                    TYPE:"POST",
+                    URL: location.origin+"/api/admin/file/upload",
+                    DATA:data,
+                    SUCCESS:function (response) {
+                        if (response.file_name) {
+                            $('[name="'+_this.prev().attr('name')+'"]').val(response.file_name)
+                            $('[data-name="'+_this.prev().attr('name')+'"]').html('<div class="jquery-uploader-card"><div class="jquery-uploader-preview-main"><div class="jquery-uploader-preview-action"><ul><li class="file-delete"><i class="fa fa-plus" onclick="$(\'.banner\').eq(0).click()" data-id=""></i></li></ul></div><img alt="preview"  class="files_img" src="'+get_img_src(response.file_name)+'"></div></div>')
+                        }
+                    }
+                },true);
+            })
+        </script>

@@ -1,0 +1,155 @@
+{% extends "admin/layout.html" %}
+{% block title %}Product Price{% endblock %}
+
+{% load static %}
+{% block main %}
+<link href="{% static 'pagination/simplePagination.css' %}" rel="stylesheet">
+<script type="text/javascript" src="{% static 'pagination/jquery.simplePagination.js' %}"></script>
+<main>
+	<!-- <div class="row mb-6">
+		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+			<div class="card">
+				<div class="row">
+					<div class="col">
+						<input type="number" class="form-control col-3" name="pin_code">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div> -->
+
+	<div class="row mb-6">
+		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+				<div class="tab-content p-4" id="pills-tabContent-table">
+					<div class="tab-pane tab-example-design fade show
+					active" id="pills-table-design" role="tabpanel" aria-labelledby="pills-table-design-tab">
+					<div class=" row card-ajax-responsive"></div>
+			</div>
+		</div>
+	</div>
+</div>
+</main>
+
+
+<div style="display: none;" id="card_table">
+	<div class="col-md-12 mb-3">
+		<div class="card">
+			<div class="card-body">
+				<div class="row">
+					<div class="col-md-3 mb-3 text-center">
+						<img style="height: 300px;max-width: 100%;" data-src="IMG_SRC" alt="Card image cap">
+					</div>
+					<div class="col-md-9 mb-3">
+						<b style="float: right;">SHOP_NAME</b>
+						<h5 class="card-title"><a href="/admin/price/table?product_id=PRODUCT_ID">PRODUCT_NAME</a></h5>
+						<p class="card-text" >
+							<span class="btn btn-sm btn-danger">SHOP_PRODUCT_DISCOUNT % Off</span> 
+							<span class="btn btn-sm">CURRENCY SHOP_PRODUCT_PRICE</span>
+							<span class="btn btn-sm">CURRENCY <del class="text-danger">SHOP_PRODUCT_MSP</del> </span> 
+						</p>
+						<p class="card-text">
+							<small class="text-muted">Last updated LAST_MODIFY ago</small>
+						</p>
+						<div class="row text-center">
+							<div class="col">
+								<form method="POST" action="{{edit}}">
+									<input type="hidden" name="shop_id" value="{{shop_id}}">
+									<input type="hidden" name="price_id" value="PRICE_ID">
+									<input type="hidden" name="csrfmiddlewaretoken" value="{{csrf_token}}">
+									<span class="btn btn-primary listing-btn w-100"  onclick="$(this).parent().submit()">Edit</span>
+								</form>
+							</div>
+							<div class="col">
+								<span class="btn btn-danger listing-btn w-100" data-id="PRICE_ID" onclick="delete_product($(this))">Delete</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="light-pagination" class="pagination"></div>
+<script type="text/javascript">
+	$('.page-heading-btn').html('<a href="{{add}}" class="listing-btn btn btn-sm btn-primary"></a>')
+	currentPage = 1
+	function get_data() {
+		data= {TYPE:'GET_PRODUCT'}
+		data['shop_id'] = input_GET('shop_id')
+		data['skip'] = (globalThis.currentPage-1)*10
+
+		if ($('[name="search"]').val().trim()!=='') {
+			data['search'] = $('[name="search"]').val()
+		}
+		return data;
+	}
+	$('[name="shop_id"]').change(function () {
+		console.log(get_data())
+ 		get_price_ajax(get_data())
+	})
+	$('[name="search"]').keyup(function () {
+		if (typeof objTimeout !=='undefined') {
+			clearTimeout(objTimeout)
+		}
+		objTimeout = setTimeout(function () {
+	 		get_price_ajax(get_data())
+		},1000)
+	})
+	function get_price_ajax(data){
+		custom_AJAX({
+			TYPE:"POST",
+			URL: location.origin+'/api/admin/service/price/list',
+			DATA:data,
+			SUCCESS:function (response) {
+				listing = response.listing
+				count = response.count_shop_product
+				$('#light-pagination').pagination({
+					pages: Math.ceil(count/10),
+					currentPage: globalThis.currentPage,
+					cssStyle: 'light-theme',
+					onPageClick: function (a,b) {
+						globalThis.currentPage = a
+						get_price_ajax(get_data())
+					}
+				});
+				$('.card-ajax-responsive').html('')
+				$('.step-anchor').show()
+				$('.page-heading').html('Product Price')
+				for (var i = 0; i < $('.listing-btn').length; i++) {
+					$('.listing-btn').eq(i).html(response.LANG_TEXT.btn[i])
+				}
+				for (var i = 0; i < listing.length; i++) {
+					dif = get_time_diff(listing[i]['updated_at']['$date'])
+					html = replace_HTML($('#card_table').html(),{
+						'data-src="IMG_SRC"'   : 'src="'+get_img_src(listing[i]['product'][0]['photo'][0]['file_url'])+'"',
+						"PRODUCT_NAME"         : listing[i]['product'][0]['product_name'],
+						"SHOP_NAME"            : listing[i]['shop'][0]['shop_name'],
+						"CURRENCY"             : listing[i]['currency'],
+						"SHOP_PRODUCT_DISCOUNT": toLocaleString(listing[i]['discount_percentage']),
+						"SHOP_PRODUCT_PRICE"   : toLocaleString(listing[i]['final_amount']),
+						"SHOP_PRODUCT_MSP"     : toLocaleString(listing[i]['shop_product_msp']),
+						"LAST_MODIFY"          : dif[0][0]+' '+dif[0][1],
+						"PRICE_ID"             : listing[i]['_id']['$oid'],
+						"PRODUCT_ID"           : listing[i]['product'][0]['_id']['$oid'],
+					})
+					$('.card-ajax-responsive').append(html)
+				}
+			}		
+		})
+	}
+	function ObjectId(_this) {
+		return _this
+	}
+	function delete_product(_this) {
+		custom_AJAX({
+			TYPE:"POST",
+			URL: location.origin+'/api/admin/service/price/delete',
+			DATA:{price_id:_this.attr('data-id')},
+			SUCCESS:function (response) {
+				_this.closest('.card').remove()
+			}
+		});
+	}
+	get_price_ajax(get_data())
+</script>
+{% endblock %}

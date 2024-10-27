@@ -1,0 +1,127 @@
+{% extends "admin/layout.html" %}
+{% load static %}
+
+{% block main %}
+<link href="{% static 'pagination/simplePagination.css' %}" rel="stylesheet">
+<script type="text/javascript" src="{% static 'pagination/jquery.simplePagination.js' %}"></script>
+<main>
+	<div class="row mb-6">
+		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+			<div class="tab-content" id="pills-tabContent-table">
+				<div class="tab-pane tab-example-design fade show active" id="pills-table-design" role="tabpanel" aria-labelledby="pills-table-design-tab">
+					<div class=" row card-ajax-responsive"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</main>
+<div style="display: none;" id="card_table" >
+	<div class="col-md-12 mb-3">
+		<div class="card">
+			<div class="card-body">
+				<div class="row">
+					<div class="col-md-3 mb-3 text-center">
+						<img style="height: 300px;max-width: 100%;" data-src="IMG_SRC" alt="Card image cap">
+					</div>
+					<div class="col-md-9 mb-3">
+						<h5 class="card-title">PRODUCT_NAME</h5>
+					</div>
+					<div class="col-md-3 mb-3">
+					</div>
+					<div class="col-md-9 mb-3">
+						<div class="row text-center">
+							<div class="col">
+								<form method="POST" style="display:inline;" action="{{edit}}">
+									<input type="hidden" name="product_id" value="PRODUCT_ID">
+									<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+									<span class="btn btn-primary w-100 listing-btn" onclick="$(this).parent().submit()"></span>
+								</form>
+							</div>
+							<div class="col">
+								<a href="{{ price }}?product_id=PRODUCT_ID" class="btn w-100 btn-secondary listing-btn"></a>
+							</div>
+							<div class="col">
+								<a href="{{ price_add }}?product_id=PRODUCT_ID" class="btn w-100 btn-success listing-btn"></a>
+							</div>
+							<div class="col">
+								<span class="btn btn-danger w-100 listing-btn" onclick="delete_product($(this))" data-id="PRODUCT_ID"></span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>	
+	</div>
+</div>
+<div id="light-pagination" class="pagination"></div>
+
+<script type="text/javascript">
+	$('.page-heading-btn').html('<a class="btn btn-primary listing-btn" href="'+location.origin+'{{ add }}'+'"></a>')
+	data= {csrfmiddlewaretoken:'{{ csrf_token }}' }
+	currentPage = 1
+	function get_data() {
+		data= {csrfmiddlewaretoken:'{{ csrf_token }}' }
+		data['skip'] = (globalThis.currentPage-1)*10
+		if ($('[name="search"]').val().trim()!=='') {
+			data['search'] = $('[name="search"]').val()
+		}
+		return data;
+	}
+	$('[name="search"]').keyup(function () {
+		if (typeof objTimeout !=='undefined') {
+			clearTimeout(objTimeout)
+		}
+		objTimeout = setTimeout(function () {
+	 		get_product_ajax(get_data())
+		},1000)
+	})
+	function get_product_ajax(data){
+		custom_AJAX({
+			TYPE:"POST",
+			URL: location.origin+'/api/admin/service/list',
+			DATA:data,
+			SUCCESS:function (response) {
+				listing = response.product
+				count = response.count_product
+				$('#light-pagination').pagination({
+					pages: Math.ceil(count/10),
+					currentPage: globalThis.currentPage,
+					cssStyle: 'light-theme',
+					onPageClick: function (a,b) {
+						globalThis.currentPage = a
+						get_product_ajax(get_data())
+					}
+				});
+				$('.step-anchor').show()
+				for (var i = 0; i < $('.page-heading').length; i++) {
+					$('.page-heading').eq(i).html(response.LANG_TEXT.heading[i])
+				}
+				for (var i = 0; i < $('.listing-btn').length; i++) {
+					$('.listing-btn').eq(i).html(response.LANG_TEXT.btn[i])
+				}
+				$('.card-ajax-responsive').html('')
+				for (var i = 0; i < listing.length; i++) {
+					HTML = {
+						'data-src="IMG_SRC"' : 'src="'+get_img_src(listing[i].photos.length?listing[i].photos[0].file_url:'upload/product_photo_file/default.png')+'"',
+						PRODUCT_NAME         : listing[i].product_name,
+						PRODUCT_ID           : listing[i]._id.$oid
+					}
+					html = replace_HTML($('#card_table').html(),HTML)
+					$('.card-ajax-responsive').append(html)
+				}
+			}		
+		})
+	}
+	get_product_ajax(get_data())
+	function delete_product(_this) {
+		custom_AJAX({
+			TYPE:"POST",
+			URL: location.origin+'/api/admin/service/delete',
+			DATA:{product_id:_this.attr('data-id')},
+			SUCCESS:function (response) {
+				_this.closest('.card').remove()
+			}
+		});
+	}
+</script>
+{% endblock %}

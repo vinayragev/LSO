@@ -1,0 +1,560 @@
+{% extends "home/shop/layout.html" %}
+    {% load static %}
+{% block title %}Seller{% endblock %}
+
+{% block main %}
+<link href="{% static 'pagination/simplePagination.css' %}" rel="stylesheet">
+<script type="text/javascript" src="{% static 'pagination/jquery.simplePagination.js' %}"></script>
+<link rel="stylesheet" href="{% static 'assets/css/home.css' %}">
+
+<div class="container">
+<div class="row align-items-center" style="margin-bottom:24px">
+          <div class="col-xl-12 col-lg-12 col-md-12 col-12">
+            <div style="text-align: center;" class="div-banner">
+              <img class="shop_banner" style="height: auto;width:100%;max-height: 400px;max-width: 703px;">
+              <!-- <img src="/public/assets/images/background/profile-cover.jpg" style="width:100%;"> -->
+            </div>
+            <div class="bg-white rounded-bottom smooth-shadow-sm ">
+              <div class="d-flex align-items-center justify-content-between
+                  pt-4 pb-6 px-4" style="margin-bottom: 30px;">
+                <div class="d-flex align-items-center">
+                  <!-- avatar -->
+                  <div class="avatar-xxl avatar-indicators avatar-online me-2
+                      position-relative d-flex justify-content-end
+                      align-items-end mt-n10">
+                    <img src="{% static 'assets/images/avatar/avatar-1.jpg' %}" class="avatar-xxl
+                        rounded-circle border border-4 border-white-color-40 shop_photo" alt="">
+                  </div>
+                  <!-- text -->
+                  <div class="lh-1">
+                    <h2 class="mb-0"><span class="owner_full_name"></span>
+                      <a href="#!" class="text-decoration-none" data-bs-toggle="tooltip" data-placement="top" title="" data-original-title="Beginner">
+
+                      </a>
+                    </h2>
+                    <p class="mb-0 d-block shop_name"></p>
+                  </div>
+                </div>
+                <div>
+                </div>
+              </div>
+              <ul class="nav nav-lt-tab px-4" id="pills-tab" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link active" data-class="nav-seller-tab" href="#index">Overview</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-class="nav-seller-tab" href="#product">Products</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-class="nav-seller-tab" href="#service">Service</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-class="nav-seller-tab" href="#order">Order</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-class="nav-seller-tab" href="#cart">Cart</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <script type="text/javascript">
+          $('[data-class="nav-seller-tab"]').click(function () {
+            $('[data-class="nav-seller-tab"]').removeClass('active')
+            $(this).addClass('active')
+            $('[data-category]').hide()
+            $('[data-category="'+$(this).attr('href')+'"]').show()
+          })
+        </script>
+        <div class="py-6" data-category="#index">
+          <div class="row">
+            <div class="col-xl-4 col-lg-12 col-md-12 col-12 mb-6">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">About Shop</h4>
+                  <span class="text-uppercase fw-medium text-dark
+                  fs-5 ls-2">Info</span>
+                  <p class="mt-2 mb-6 shop_about">
+                  </p>
+                  <div class="row">
+                    <div class="col-6 mb-5">
+                      <h6 class="text-uppercase fs-5 ls-2">Phone </h6>
+                      <p class="mb-0 shop_mobile"></p>
+                    </div>
+                    <div class="col-6 mb-5">
+                      <h6 class="text-uppercase fs-5 ls-2">Open since </h6>
+                      <p class="mb-0 shop_open"></p>
+                    </div>
+                    <div class="col-6">
+                      <h6 class="text-uppercase fs-5 ls-2">Email </h6>
+                      <p class="mb-0 shop_email"></p>
+                    </div>
+                    <div class="col-6">
+                      <h6 class="text-uppercase fs-5 ls-2">Location
+                      </h6>
+                      <p class="mb-0 shop_location"></p>
+                    </div>
+                    <!-- <div class="col-6">
+                      <h6 class="text-uppercase fs-5 ls-2">Apply for Job</h6>
+                      <p class="mb-0"><a class="add_staff btn btn-sm btn-primary">Click</a></p>
+                    </div> -->
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-4 col-lg-12 col-md-12 col-12 mb-6">
+              <!-- card -->
+              <div class="card">
+                <!-- card body -->
+                <div class="card-body">
+                  <div id="shop_map">
+                    <iframe style="height: 270px;width: 100%;"></iframe>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-4 col-lg-12 col-md-12 col-12 mb-6">
+              <!-- card -->
+              <div class="card">
+                <!-- card body -->
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-12">
+                      <span class="star" style="font-size: large;">
+                        <i class="fa fa-star" aria-hidden="true"></i>
+                      <i class="fa fa-star-o" aria-hidden="true"></i>
+                      <i class="fa fa-star-o" aria-hidden="true"></i>
+                      <i class="fa fa-star-o" aria-hidden="true"></i>
+                      <i class="fa fa-star-o" aria-hidden="true"></i>
+                      </span>
+                      <span class="no-people-review-1"></span> Peoples Feedback
+                    </div>
+                    <div class="col-12">
+                      <span class="star" style="font-size: large;">
+                      <i class="fa fa-star" aria-hidden="true"></i>
+                      <i class="fa fa-star" aria-hidden="true"></i>
+                      <i class="fa fa-star-o" aria-hidden="true"></i>
+                      <i class="fa fa-star-o" aria-hidden="true"></i>
+                      <i class="fa fa-star-o" aria-hidden="true"></i>
+                      </span>
+                      <span class="no-people-review-2"></span> Peoples Feedback
+                    </div>
+                    <div class="col-12">
+                      <span class="star" style="font-size: large;">
+                      <i class="fa fa-star" aria-hidden="true"></i>
+                      <i class="fa fa-star" aria-hidden="true"></i>
+                      <i class="fa fa-star" aria-hidden="true"></i>
+                      <i class="fa fa-star-o" aria-hidden="true"></i>
+                      <i class="fa fa-star-o" aria-hidden="true"></i>
+                      </span>
+                      <span class="no-people-review-3"></span> Peoples Feedback
+                    </div>
+                    <div class="col-12">
+                      <span class="star" style="font-size: large;">
+                      <i class="fa fa-star" aria-hidden="true"></i>
+                      <i class="fa fa-star" aria-hidden="true"></i>
+                      <i class="fa fa-star" aria-hidden="true"></i>
+                      <i class="fa fa-star" aria-hidden="true"></i>
+                      <i class="fa fa-star-o" aria-hidden="true"></i>
+                      </span>
+                      <span class="no-people-review-4"></span> Peoples Feedback
+                    </div>
+                    <div class="col-12">
+                      <span class="star" style="font-size: large;">
+                      <i class="fa fa-star" aria-hidden="true"></i>
+                      <i class="fa fa-star" aria-hidden="true"></i>
+                      <i class="fa fa-star" aria-hidden="true"></i>
+                      <i class="fa fa-star" aria-hidden="true"></i>
+                      <i class="fa fa-star" aria-hidden="true"></i>
+                      </span>
+                      <span class="no-people-review-5"></span> Peoples Feedback
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="py-6" data-category="#cart" style="display:none">
+          <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-12 mb-6">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">cart</h4>
+                  <div class="row cart_product"></div>
+                    <p class="card-text btn btn-sm btn-success book-now">Book Now</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="py-6" data-category="#product" style="display:none">
+          <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-12 mb-6">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Shop Product <input type="text" class="form-control" placeholder="Search" name="product_search"></h4>
+                  <div class="row shop_product"></div>
+                  <div id="price-pagination" class="pagination"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="py-6" data-category="#service" style="display:none">
+          <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-12 mb-6">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Shop Service <input type="text" class="form-control" placeholder="Search" name="service_search"></h4>
+                  <div class="row shop_service"></div>
+                  <div id="service-pagination" class="pagination"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="py-6" data-category="#order" style="display:none">
+          <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-12 mb-6">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Order</h4>
+                    <div class="row cart_order"></div>
+                    <div id="order-pagination" class="pagination"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+          <!-- <div class="col-md-3 mb-3" >
+              <div style="text-align: center;">
+                <img style="height: 300px;max-width: 100%;" data-src="IMG_SRC" alt="Card image cap">
+              </div>
+              <div class="card-body" style="border-bottom:1px solid black;border-right:1px solid black;;border-left:1px solid black;border-right:1px solid black;">
+                <h5 class="card-title">PRODUCT_NAME</h5>
+                <p class="card-text">PRODUCT_MANUFACTURER</p>
+                <p class="card-text row" >
+                  <span class="btn col btn-sm btn-danger">SHOP_PRODUCT_DISCOUNT % Off</span> 
+                  <span class="btn col btn-sm">CURRENCY SHOP_PRODUCT_PRICE</span>
+                  <span class="btn col btn-sm">CURRENCY <del class="text-danger">SHOP_PRODUCT_MSP</del></span>
+                </p>
+                <p class="card-text">
+                  <span class="btn btn-sm">QTY_TYPE_VALUE</span>
+                </p>
+                <div class="row text-center">
+                      <span class="btn btn-dark" data-id="PRICE_ID" onclick="add_cart_form($(this))">Add to cart</span>
+                </div>
+              </div>
+          </div> -->
+
+        <div style="display: none;" id="shop_product_table">
+          <div class="row">
+            <div class="col-md-3 mb-3 text-center">
+              <img style="height: 200px;max-width: 100%;" data-src="IMG_SRC" alt="Card image cap">
+            </div>
+            <div class="col-md-9 mb-3">
+              <h5 class="card-title">PRODUCT_NAME</h5>
+              <p class="card-text">PRODUCT_MANUFACTURER</p>
+              <p class="card-text">
+                <span class="btn col btn-sm btn-danger">SHOP_PRODUCT_DISCOUNT % Off</span> 
+                <span class="btn col btn-sm">CURRENCY SHOP_PRODUCT_PRICE</span>
+                <span class="btn col btn-sm">CURRENCY <del class="text-danger">SHOP_PRODUCT_MSP</del></span>
+                <span class="btn btn-sm">QTY_TYPE_VALUE</span>
+              </p>
+              <span class="btn btn-dark" data-id="PRICE_ID" onclick="add_cart_form($(this))">Add to cart</span>
+            </div>
+          </div>
+        </div>
+        <div style="display: none;" id="shop_service_table">
+          <div class="row">
+            <div class="col-md-3 mb-3 text-center">
+              <img style="height: 200px;max-width: 100%;" data-src="IMG_SRC" alt="Card image cap">
+            </div>
+            <div class="col-md-9 mb-3">
+              <h5 class="card-title">PRODUCT_NAME</h5>
+              <p class="card-text">
+                <span class="btn col btn-sm btn-danger">SHOP_PRODUCT_DISCOUNT % Off</span> 
+                <span class="btn col btn-sm">CURRENCY SHOP_PRODUCT_PRICE</span>
+                <span class="btn col btn-sm">CURRENCY <del class="text-danger">SHOP_PRODUCT_MSP</del></span>
+              </p>
+              <span class="btn btn-dark" data-id="PRICE_ID" onclick="add_cart_form($(this))">Add to cart</span>
+            </div>
+          </div>
+        </div>
+        <div style="display: none;" id="cart_product_table">
+            <div class="row">
+              <div class="col-md-3 mb-3 text-center">
+                <img style="height: 200px;max-width: 100%;" data-src="IMG_SRC" alt="Card image cap">
+              </div>
+              <div class="col-md-9 mb-3">
+                <h5 class="card-title">PRODUCT_NAME</h5>
+                <p class="card-text">PRODUCT_MANUFACTURER</p>
+                <p class="card-text"><span class="btn btn-sm btn-light">CURRENCY SHOP_PRODUCT_PRICE | QTY_TYPE_VALUE</span><span class="btn btn-sm btn-danger">SHOP_PRODUCT_DISCOUNT % Off</span><span class="btn btn-sm btn-light">CURRENCY <del class="text-danger">SHOP_PRODUCT_MSP</del></span></p>
+                <p class="card-text"><span class="btn btn-sm btn-light">CART_QTY QTY</span> <span class="btn btn-sm btn-dark" data-cart-id="PRICE_ID" onclick="remove_from_cart($(this))">Remove</span></p>
+              </div>
+            </div>
+            <hr>
+          </div>
+        </div>
+
+<div style="display: none;" id="card_order_shop">
+            <div class="row">
+              <div class="col-md-1 mb-3">
+                <span class="card-title">SR_NO</span>
+              </div>
+              <div class="col-md-3 mb-3">
+                <span class="card-title">PRODUCT_COUNT</span>
+              </div>
+              <div class="col-md-3 mb-3">
+                <span class="card-title">TOTAL_MONEY</span>
+              </div>
+              <div class="col-md-3 mb-3">
+                CREATED_AT
+              </div>
+              <div class="col-md-2 mb-3">
+                  <a class="order_status" href="order_detail?order_id=ORDER_ID">ORDER_STATUS</a>
+              </div>
+            </div>
+            <hr>
+        </div>
+<script type="text/javascript">
+  currentPricePage = 1;
+  currentServicePage = 1;
+  currentOrderPage = 1;
+  $('.add_staff').click(function() {
+      custom_AJAX({
+          TYPE:"POST",
+          URL: location.href,
+          DATA:{'TYPE':"ADD_TO_STAFF",shop_id:'{{ shop_id }}'},
+          SUCCESS:function (response) {
+          }
+      })
+  })
+ function update_cart(listing){
+    $('.cart_product').html('')
+    for (var i = 0; i < listing.length; i++) {
+      HTML = {
+        'data-src="IMG_SRC"'  : 'src="'+get_img_src(listing[i]['photos'][0]['file_url'])+'"',
+        PRODUCT_NAME          : listing[i]['product'][0]['product_name'],
+        SHOP_PRODUCT_DISCOUNT : listing[i]['discount_percentage'],
+        CURRENCY              : listing[i]['currency'],
+        SHOP_PRODUCT_PRICE    : toLocaleString(listing[i]['final_amount']),
+        SHOP_PRODUCT_MSP      : toLocaleString(listing[i]['shop_product_msp']),
+        PRICE_ID              : listing[i]['cart'][0]['_id']['$oid'],
+        CART_QTY              : listing[i]['cart'][0]['qty'],
+      }
+      if (listing[i]['product'][0]['product']===1) {
+        HTML['PRODUCT_MANUFACTURER']  = listing[i]['product'][0]['product_manufacturer']
+        HTML['QTY_TYPE_VALUE']        = toLocaleString(listing[i]['product'][0]['product_qty'])+' '+listing[i]['product'][0]['qty_type'][0]['option_name']
+      }else{
+        HTML['PRODUCT_MANUFACTURER']  = ''
+        HTML['QTY_TYPE_VALUE']        = ''
+      }
+      html = replace_HTML($('#cart_product_table').html(),HTML)
+      $('.cart_product').append(html)
+    }
+  }
+  function update_product(listing){
+    $('.shop_product').html('')
+    for (var i = 0; i < listing.length; i++) {
+      HTML = {
+        'data-src="IMG_SRC"'  : 'src="'+get_img_src(listing[i]['photos'][0]['file_url'])+'"',
+        PRODUCT_NAME          : listing[i]['product'][0]['product_name'],
+        PRODUCT_MANUFACTURER  : listing[i]['product'][0]['product_manufacturer'],
+        SHOP_PRODUCT_DISCOUNT : listing[i]['discount_percentage'],
+        CURRENCY              : listing[i]['currency'],
+        SHOP_PRODUCT_PRICE    : toLocaleString(listing[i]['final_amount']),
+        SHOP_PRODUCT_MSP      : toLocaleString(listing[i]['shop_product_msp']),
+        QTY_TYPE_VALUE        : toLocaleString(listing[i]['product'][0]['product_qty'])+' '+listing[i]['product'][0]['qty_type'][0]['option_name'],
+        PRICE_ID              : listing[i]['_id']['$oid'],
+      }
+      console.log($('#shop_product_table').html())
+      html = replace_HTML($('#shop_product_table').html(),HTML)
+      $('.shop_product').append(html)
+    }
+  }
+  function update_service(listing){
+    $('.shop_service').html('')
+    for (var i = 0; i < listing.length; i++) {
+      HTML = {
+        'data-src="IMG_SRC"'  : 'src="'+get_img_src(listing[i]['photos'][0]['file_url'])+'"',
+        PRODUCT_NAME          : listing[i]['product'][0]['product_name'],
+        SHOP_PRODUCT_DISCOUNT : listing[i]['discount_percentage'],
+        CURRENCY              : listing[i]['currency'],
+        SHOP_PRODUCT_PRICE    : toLocaleString(listing[i]['final_amount']),
+        SHOP_PRODUCT_MSP      : toLocaleString(listing[i]['shop_product_msp']),
+        PRICE_ID              : listing[i]['_id']['$oid'],
+      }
+      console.log($('#shop_service_table').html())
+      html = replace_HTML($('#shop_service_table').html(),HTML)
+      $('.shop_service').append(html)
+    }
+  }
+  function update_order(order){
+      $('.cart_order').html('')
+      for (var i = 0; i < order.length; i++) {
+        HTML = {
+          SR_NO                : globalThis.currentOrderPage*10-9+i,
+          ORDER_STATUS         : order[i]['order_status'][0]['option_name'],
+          TOTAL_MONEY          : toLocaleString(order[i]['total_money']),
+          PRODUCT_COUNT        : order[i]['total_cart'],
+          CREATED_AT           : get_time(order[i]['created_at']['$date']),
+          ORDER_ID             : order[i]['_id']['$oid'],
+        }
+        $('.cart_order').append(replace_HTML($('#card_order_shop').html(),HTML))
+      }
+  }
+  function add_cart_form(_this) {
+      data = {TYPE:"ADD_TO_CART",product_price_id:_this.attr('data-id')}
+      custom_AJAX({
+          TYPE:"POST",
+          URL: location.origin+'/api/add_to_cart',
+          DATA:data,
+          SUCCESS:function (response) {
+            update_cart(response.product_price)
+          }
+      })
+  }
+  function remove_from_cart(_this) {
+      data = {TYPE:"REMOVE_FROM_CART",cart_id:_this.attr('data-cart-id')}
+      custom_AJAX({
+          TYPE:"POST",
+          URL: location.origin+'/api/remove_from_cart',
+          DATA:data,
+          SUCCESS:function (response) {
+            update_cart(response.product_price)
+          }
+      })
+  }
+  $('[name="product_search"]').keyup(function () {
+      custom_AJAX({
+          TYPE:"POST",
+          URL: location.origin+"/api/seller_product",
+          DATA:{TYPE:"GET_SELLER_PRODUCT",shop_id:'{{shop_id}}',search:$('[name="product_search"]').val()},
+          SUCCESS:function (response) {
+            update_product(response.product_price)
+          }
+      })
+  })
+  $('[href="#product"]').click(function () {
+      custom_AJAX({
+          TYPE:"POST",
+          URL: location.origin+"/api/seller_product",
+          DATA:{TYPE:"GET_SELLER_PRODUCT",shop_id:'{{shop_id}}','skip':(globalThis.currentPricePage-1)*10},
+          SUCCESS:function (response) {
+            update_product(response.product_price)
+            $('#price-pagination').pagination({
+              pages: Math.ceil(response.count_product_price/10),
+              currentPage: globalThis.currentPricePage,
+              cssStyle: 'light-theme',
+              onPageClick: function (a,b) {
+                globalThis.currentPricePage = a;
+                $('[href="#product"]').click()
+              }
+            });
+          }
+      })
+  })
+  $('[name="service_search"]').keyup(function () {
+      custom_AJAX({
+          TYPE:"POST",
+          URL: location.origin+"/api/seller_service",
+          DATA:{TYPE:"GET_SELLER_SERVICE",shop_id:'{{shop_id}}',search:$('[name="service_search"]').val()},
+          SUCCESS:function (response) {
+            update_service(response.product_price)
+          }
+      })
+  })
+  $('[href="#service"]').click(function () {
+      custom_AJAX({
+          TYPE:"POST",
+          URL: location.origin+"/api/seller_service",
+          DATA:{TYPE:"GET_SELLER_SERVICE",shop_id:'{{shop_id}}','skip':(globalThis.currentServicePage-1)*10},
+          SUCCESS:function (response) {
+            update_service(response.product_price)
+            $('#service-pagination').pagination({
+              pages: Math.ceil(response.count_product_price/10),
+              currentPage: globalThis.currentServicePage,
+              cssStyle: 'light-theme',
+              onPageClick: function (a,b) {
+                globalThis.currentServicePage = a;
+                $('[href="#service"]').click()
+              }
+            });
+          }
+      })
+  })
+  $('[href="#cart"]').click(function () {
+      custom_AJAX({
+          TYPE:"POST",
+          URL: location.origin+'/api/seller_cart_list',
+          DATA:{TYPE:"GET_CART",shop_id:'{{shop_id}}'},
+          SUCCESS:function (response) {
+            update_cart(response.product_price)
+          }
+      })
+  })
+  $('[href="#order"]').click(function () {
+      custom_AJAX({
+          TYPE:"POST",
+          URL: location.origin+'/api/seller_order_list',
+          DATA:{TYPE:"GET_ORDER",shop_id:'{{shop_id}}','skip':(globalThis.currentOrderPage-1)*10},
+          SUCCESS:function (response) {
+            update_order(response.order)
+            $('#order-pagination').pagination({
+              pages: Math.ceil(response.count_order/10),
+              currentPage: globalThis.currentOrderPage,
+              cssStyle: 'light-theme',
+              onPageClick: function (a,b) {
+                globalThis.currentOrderPage = a;
+                $('[href="#order"]').click()
+              }
+            });
+          }
+      })
+  })
+  custom_AJAX({
+      TYPE:"POST",
+      URL: location.origin+'/api/seller_detail',
+      DATA:{TYPE:"GET_SELLER",shop_id:'{{shop_id}}'},
+      SUCCESS:function (response) {
+          shop = response.shop[0]
+          $('.shop_photo').attr('src',get_img_src(shop['photo']))
+          $('.shop_banner').attr('src',get_img_src(shop['banner']))
+          $('.div-banner').css('background','rgb('+get_average_rgb(get_img_src(shop['banner']))+')')
+          $('.owner_full_name').html(shop['owner_full_name'])
+          $('.shop_name').html(shop['shop_name'])
+          $('.shop_about').html(shop['info'])
+
+          $('.no-people-review-1').html(shop['star_1'])
+          $('.no-people-review-2').html(shop['star_2'])
+          $('.no-people-review-3').html(shop['star_3'])
+          $('.no-people-review-4').html(shop['star_4'])
+          $('.no-people-review-5').html(shop['star_5'])
+
+          $('.shop_mobile').html(shop['mobile'])
+          $('.shop_open').html(shop['open_since'])
+          $('.shop_email').html(shop['email'])
+          // $('iframe').attr('src',response.geolocation+shop['latitude']+','+shop['longitude']+"&output=embed")
+          $('.shop_location').html(shop['full_address']+', '+shop['pincode']+', '+shop['city']+', '+shop['state']+', '+shop['country'])
+          // update_product(response['product_price'])
+          // update_cart(response['cart'])
+          // update_order(shop['order'])
+        }
+  })
+    $(document).on('click','.book-now',function(e,d){
+      data = {TYPE:"BOOK_NOW",shop_id:input_GET('seller_id')}
+      custom_AJAX({
+          TYPE:"POST",
+          URL: location.origin+"/api/user_book_now",
+          DATA:data,
+          SUCCESS:function (response) {
+              $('[href="#order"]').click()
+          }
+      })
+  });
+</script>
+{% endblock %}

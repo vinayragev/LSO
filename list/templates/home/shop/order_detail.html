@@ -1,0 +1,225 @@
+{% extends "home/shop/layout.html" %}
+{% load static %}
+{% block title %}Order Detail{% endblock %}
+
+{% block main %}
+
+
+<div class="container">
+  
+<div class="" data-category="#order">
+  <div class="row">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-12 mb-6">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Order</h4>
+          <div class="row">
+            <div class="col-md-3">
+              <h5>Shop Name</h5>
+              <p class="shop_name"></p>
+            </div>
+            <div class="col-md-3">
+              <h5>Shop Address</h5>
+              <p class="shop_address"></p>
+            </div>
+            <div class="col-md-3">
+              <h5>Order Time</h5>
+              <p class="order_genrated_time"></p>
+            </div>
+            <div class="col-md-3">
+              <h5>Order Status</h5>
+              <p class="order_status"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<br>
+<div class="" data-category="#order">
+  <div class="row">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-12 mb-6">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Counter <span class="btn btn-sm btn-secondary update-order-token" style="float: right;">Refresh</span></h4>
+          <div class="row">
+            <div class="col-md-4">
+              <h5>Current order token on counter</h5>
+              <p class="current_order_token"></p>
+            </div>
+            <div class="col-md-4">
+              <h5>Your order token</h5>
+              <p class="user_order_token"></p>
+            </div>
+            <div class="col-md-4">
+              <h5>Total Order token on Counter</h5>
+              <p class="total_order_token"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<br>
+<div class="" data-category="#order">
+  <div class="row cart_order"></div>
+</div>
+</div>
+<div style="display: none;" id="card_order_shop">
+  <div class="col-md-3 mb-3">
+    <div class="card">
+      <div class="card-body">
+        <div class="text-center">
+          <img style="height: 200px;max-width: 100%;" data-src="IMG_SRC" alt="Card image cap">
+        </div>
+        <h5 class="card-title">PRODUCT_NAME</h5>
+        <p class="card-text">PRODUCT_MANUFACTURER</p>
+        <p class="card-text"><span class="btn btn-sm btn-light">CURRENCY SHOP_PRODUCT_PRICE | QTY_TYPE_VALUE</span></p>
+        <span class="star" data-cart-id="CART_ID" data-star="S_COUNT"  style="font-size: large;" onclick="review_product($(this))">
+         STAR
+        </span>  
+        <p class="card-text"><span class="btn btn-sm btn-light">CART_QTY QTY</span></p>
+        <span class="btn btn-sm btn-dark" data-price-id="PRICE_ID" onclick="add_cart_form($(this))">Buy it again</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title model_shop_name" id="exampleModalLabel"></h5>
+            <button type="button" class="close" data-dismiss="modal" onclick="close_model()" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form id="form_query">
+              <div class="modal-body">
+                <h5 class="modal-title product-name" id="exampleModalLabel"></h5>
+                  <div class="form-group">
+                    <input type="hidden" name="cart_id">
+                    <input type="hidden" name="star">
+                    <label for="message-text" class="col-form-label">Star:</label>
+                    <span class="model-star">
+                        <i class="fa fa-star-o" aria-hidden="true" onclick="add_star(1)"></i>
+                        <i class="fa fa-star-o" aria-hidden="true" onclick="add_star(2)"></i>
+                        <i class="fa fa-star-o" aria-hidden="true" onclick="add_star(3)"></i>
+                        <i class="fa fa-star-o" aria-hidden="true" onclick="add_star(4)"></i>
+                        <i class="fa fa-star-o" aria-hidden="true" onclick="add_star(5)"></i>
+                    </span>
+
+                  </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="close_model()">Close</button>
+                <input type="submit" class="btn btn-primary" value="Send Query">
+              </div>
+          </form>
+        </div>
+      </div>
+    </div>
+<script type="text/javascript">
+  order_id = input_GET('order_id')
+  custom_AJAX({
+    TYPE:"POST",
+    URL: location.origin+"/api/user_order_detail",
+    DATA:{TYPE:"GET_ORDER_DETAIL",order_id:order_id},
+    SUCCESS:function (response) {
+      shop = response.order[0].shop[0]
+      cart = response.order[0].cart
+      $('.order_genrated_time').html(get_time(response.order[0]['created_at']['$date']))
+      $('.cart_order').html('')
+      $('.shop_name').html(shop['shop_name'])
+      $('.shop_address').html(shop['shop_address'])
+      $('.current_order_token').html(response.current_order_token)
+      $('.user_order_token').html(response.user_order_token)
+      $('.total_order_token').html(response.total_order_token)
+      $('.order_status').html(response.order[0]['order_status'][0]['option_name'])
+      $('.shop_address').html(shop['full_address'])
+      for (var i = 0; i < cart.length; i++) {
+        HTML = {
+          'data-src="IMG_SRC"'  : 'src="'+get_img_src(cart[i]['product'][0]['product_photo'][0]['file_url'])+'"',
+          PRODUCT_NAME          : cart[i]['product'][0]['product_name'],
+          CURRENCY              : cart[i]['product_price'][0]['currency'],
+          SHOP_PRODUCT_PRICE    : toLocaleString(cart[i]['product_price'][0]['final_amount']),
+          CART_QTY              : toLocaleString(cart[i]['qty']),
+          CART_ID               : toLocaleString(cart[i]['_id']['$oid']),
+          PRICE_ID              : toLocaleString(cart[i]['product_price'][0]['_id']['$oid']),
+          STAR                  : get_star(cart[i]['star']),
+          S_COUNT               : cart[i]['star']
+        }
+        if (cart[i]['product'][0]['product']) {
+          HTML['PRODUCT_MANUFACTURER']  = cart[i]['product'][0]['product_manufacturer'];
+          HTML['QTY_TYPE_VALUE']        = toLocaleString(cart[i]['product'][0]['product_qty'])+' '+cart[i]['product'][0]['qty_type'][0]['option_name'];
+
+        }else{
+          HTML['PRODUCT_MANUFACTURER']  = '';
+          HTML['| QTY_TYPE_VALUE']        = '';
+        }
+        $('.cart_order').append(replace_HTML($('#card_order_shop').html(),HTML))
+      }
+    }
+  })
+  function add_cart_form(_this) {
+    data = {TYPE:"ADD_TO_CART",product_price_id:_this.attr('data-price-id')}
+    custom_AJAX({
+      TYPE:"POST",
+      URL: location.origin+"/api/add_to_cart",
+      DATA:data,
+      SUCCESS:function (response) {
+      }
+    })
+  }
+  $('.update-order-token').click(function () {
+    custom_AJAX({
+      TYPE:"POST",
+      URL: location.origin+"/api/user_order_token",
+      DATA:{TYPE:"GET_ORDER_TOKEN",order_id:order_id},
+      SUCCESS:function (response) {
+        $('.current_order_token').html(response.current_order_token)
+        $('.user_order_token').html(response.user_order_token)
+        $('.total_order_token').html(response.total_order_token)
+      }
+    })
+  })
+  $('#form_query').submit(function(e){
+    e.preventDefault()
+    data = {TYPE:"ADD_PRODUCT_REVIEW"}
+    data['cart_id'] = $('#form_query').find('[name="cart_id"]').val()
+    data['star'] = $('#form_query').find('[name="star"]').val()
+    custom_AJAX({
+        TYPE:"POST",
+        URL: location.origin+"/api/user_add_review",
+        DATA:data,
+        SUCCESS:function (response) {
+
+        }
+    })
+  })
+  function add_star(num) {
+    $('[name="star"]').val(num)
+    for (var i = 0; i < $('.model-star').find('i').length; i++) {
+      if (num>i) {
+        $('.model-star').find('i').eq(i).attr('class','fa fa-star')
+      }else{
+        $('.model-star').find('i').eq(i).attr('class','fa fa-star-o')
+      }
+    }    
+  }
+  function review_product(_this) {
+    $('[id="exampleModal"]').modal('show')
+    $(".model_shop_name").html(_this.prev().prev().html())
+    $('[name="cart_id"]').val(_this.attr('data-cart-id'))
+    $('.model-star').find('i').attr('class','fa fa-star-o')
+    for (var i = _this.attr('data-star') - 1; i >= 0; i--) {
+      $('.model-star').find('i').eq(i).attr('class','fa fa-star')
+    }
+  }
+  function close_model(_this) {
+    $('[id="exampleModal"]').modal('hide')
+  }
+</script>
+{% endblock %}

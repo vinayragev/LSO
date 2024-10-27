@@ -1,0 +1,179 @@
+{% extends "admin/layout.html" %}
+{% block title %}Orders{% endblock %}
+
+{% load static %}
+{% block main %}
+<link href="{% static 'pagination/simplePagination.css' %}" rel="stylesheet">
+<script type="text/javascript" src="{% static 'pagination/jquery.simplePagination.js' %}"></script>
+<main>
+	<div class="row">
+		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" style="margin-bottom: 24px;">
+			<div class="card">
+				<div class="card-body">
+					<div class="row">
+						<div class="col">
+							<label>Start Date</label>
+							<input type="date" class="form-control col-md-3" name="start_date">
+						</div>
+						<div class="col">
+							<label>End Date</label>
+							<input type="date" class="form-control col-md-3" name="end_date">
+						</div>
+						<div class="col">
+							<label>Order Status</label>
+							<select class="form-select col-md-3" name="order_status">
+								<option value="">Select Status</option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+			<div class="card">
+				<div class="tab-content p-4" id="pills-tabContent-table">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>#</th>
+									<th></th>
+									<th></th>
+									<th></th>
+									<th style="text-align: right;"></th>
+								</tr>
+							</thead>
+							<tbody class="cat-table">
+							</tbody>
+						</table>
+						<div id="light-pagination" class="pagination"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</main>
+<table style="display: none;" id="hide_table">
+	<tbody>
+		<tr>
+			<td>NUM</td>
+			<td>
+				<a href="/seller?seller_id=SHOP_ID">
+					SHOP_NAME
+				</a>
+			</td>
+			<td>
+				<a href="{{ view }}?order_id=ORDER_ID">
+					USER_NAME
+				</a>
+			</td>
+			<td>
+				ORDER_CREATED_TIME
+			</td>
+			<td style="text-align: right;">
+				<select name="order_status" data-order-id="ORDER_ID" class="form-select"></select>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<script type="text/javascript">
+	$('.page-heading-btn').html('<a class="btn btn-primary listing-btn" href="'+location.origin+'{{ add }}'+'"></a>')
+	currentPage = 1
+	function get_data() {
+		data= {}
+		data['TYPE'] = 'GET_LIST'
+		data['skip'] = (globalThis.currentPage-1)*10
+		if ($('[name="search"]').val().trim()!=='') {
+			data['search'] = $('[name="search"]').val()
+		}
+		if ($('[name="order_status"]').val().trim()!=='') {
+			data['order_status'] = $('[name="order_status"]').val()
+		}
+		if ($('[name="start_date"]').val().trim()!=='') {
+			data['start_date'] = $('[name="start_date"]').val()
+		}
+		if ($('[name="end_date"]').val().trim()!=='') {
+			data['end_date'] = $('[name="end_date"]').val()
+		}
+		keys = Object.keys(data)
+		for (var i = 0; i < keys.length; i++) {
+			if(['',null,NaN].includes(data[keys[i]])){
+				delete data[keys[i]]
+			}
+		}
+		return data;
+	}
+	$('[name="search"]').keyup(function () {
+		$('[name="parent_id"]').val('')
+		if (typeof objTimeout !=='undefined') {
+			clearTimeout(objTimeout)
+		}
+		objTimeout = setTimeout(function () {
+	 		get_order_ajax(get_data())
+		},1000)
+	})
+	$('[name="start_date"],[name="end_date"],[name="order_status"]').change(function () {
+		get_order_ajax(get_data())
+	})
+	function get_order_ajax(data) {
+		custom_AJAX({
+			TYPE:"POST",
+			URL: location.origin="/api/admin/order/list",
+			DATA:data,
+			SUCCESS:function (response) {
+				$('.cat-table').html('')
+				count = response.count_order
+				$('#light-pagination').pagination({
+					pages: Math.ceil(count/10),
+					currentPage: globalThis.currentPage,
+					cssStyle: 'light-theme',
+					onPageClick: function (a,b) {
+						globalThis.currentPage = a
+						get_order_ajax(get_data())
+					}
+				});
+				$('.step-anchor').show()
+				// for (var i = 0; i < $('.page-heading').length; i++) {
+					$('.step-anchor').show()
+					$('.page-heading').eq(0).html(response.LANG_TEXT.page_heading)
+				// }
+				for (var i = 1; i < $('.table-responsive').find('th').length; i++) {
+					$('.table-responsive').find('th').eq(i).html(response.LANG_TEXT.th[i-1])
+				}
+				option = response.option
+				for (var i = 0; i < option.length; i++) {
+					if ($('[name="'+option[i]['select_name']+'"]').find('[value="'+option[i]['option_value']+'"]').length===0) {
+						$('[name="'+option[i]['select_name']+'"]').append('<option value="'+option[i]['option_value']+'">'+option[i]['option_name']+'</option>')
+					}
+				}
+				listing = response.order
+				for (var i = 0; i < Object.keys(listing).length; i++) {
+					HTML = {
+						NUM                 : (parseInt((globalThis.currentPage-1)*10)+i+1),
+						USER_NAME           : listing[i]['user'][0]['name'],
+						SHOP_NAME           : listing[i]['shop'][0]['shop_name'],
+						SHOP_ID             : listing[i]['shop'][0]['_id']['$oid'],
+						ORDER_ID            : listing[i]['_id']['$oid'],
+						ORDER_CREATED_TIME  : get_time(listing[i]['created_at']['$date']),
+					}
+					html = replace_HTML($('#hide_table').html().replace('</tbody>','').replace('<tbody>',''),HTML)
+					$('.cat-table').append(html)
+					$('.cat-table').find('[name="order_status"]').eq(i).val(listing[i]["status"][0]['option_value'])
+				}
+			}		
+		})
+	}
+	$('[name="pagi"]').change()
+	$(document).on( 'change', '[data-order-id]', function () {
+		custom_AJAX({
+			TYPE:"POST",
+			URL: location.origin+'/api/admin/order/change_status',
+			DATA:{TYPE:"UPDATE_STATUS",order_id:$(this).attr('data-order-id'),order_status:parseInt($(this).val())},
+			SUCCESS:function (response) {
+			}
+		})
+	})
+	get_order_ajax(get_data())
+</script>
+{% endblock %}

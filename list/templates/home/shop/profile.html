@@ -1,0 +1,341 @@
+{% extends "home/shop/layout.html" %}
+    {% load static %}
+{% block title %}Profile{% endblock %}
+
+{% block main %}
+<link rel="stylesheet" href="{% static 'assets/css/home.css' %}">
+<link href="{% static 'pagination/simplePagination.css' %}" rel="stylesheet">
+<script type="text/javascript" src="{% static 'pagination/jquery.simplePagination.js' %}"></script>
+
+
+
+<div class="container">
+<div class="row align-items-center" style="margin-bottom:24px">
+
+  <div class="col-xl-12 col-lg-12 col-md-12 col-12">
+    <div class="pt-20 rounded-top seller-banner" style="background: url(/public/assets/images/background/profile-cover.jpg) no-repeat; background-size: cover;">
+    </div>
+    <div class="bg-white rounded-bottom smooth-shadow-sm ">
+      <div class="d-flex align-items-center justify-content-between
+      pt-4 pb-6 px-4" style="margin-bottom: 30px;">
+      <div class="d-flex align-items-center">
+        <!-- avatar -->
+        <div class="avatar-xxl avatar-indicators avatar-online me-2
+        position-relative d-flex justify-content-end
+        align-items-end mt-n10">
+        <img src="{% static 'assets/images/avatar/avatar-1.jpg' %}" class="avatar-xxl
+        rounded-circle border border-4 border-white-color-40 shop_banner" alt="">
+      </div>
+      <!-- text -->
+      <div class="lh-1">
+        <h2 class="mb-0"><span class="owner_full_name"></span>
+          <a href="#!" class="text-decoration-none" data-bs-toggle="tooltip" data-placement="top" title="" data-original-title="Beginner">
+          </a>
+        </h2>
+        <p class="mb-0 d-block shop_name">@imjituchauhan</p>
+      </div>
+    </div>
+    <div>
+    </div>
+  </div>
+  <ul class="nav nav-lt-tab px-4" id="pills-tab" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link active" data-class="nav-seller-tab" href="#order">Order</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-class="nav-seller-tab" href="#cart">Cart</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-class="nav-seller-tab" href="#query">Query</a>
+    </li>
+  </ul>
+</div>
+</div>
+</div>
+        <script type="text/javascript">
+          $('[data-class="nav-seller-tab"]').click(function () {
+            $('[data-class="nav-seller-tab"]').removeClass('active')
+            $(this).addClass('active')
+            $('[data-category]').hide()
+            $('[data-category="'+$(this).attr('href')+'"]').show()
+          })
+        </script>
+        <div class="py-6" data-category="#cart" style="display:none">
+          <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-12 mb-6">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Cart</h4>
+                  <div class="row cart_shop"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="py-6" data-category="#order">
+          <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-12 mb-6">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Order</h4>
+                  <div class="row order_product"></div>
+                  <div id="order-pagination" class="pagination"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="py-6" data-category="#query">
+          <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-12 mb-6">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Query</h4>
+                  <div class="row query_seller"></div>
+                  <div id="query-pagination" class="pagination"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+        <div style="display: none;" id="card_shop_table">
+            <div class="row">
+              <div class="col-md-3 mb-3 text-center">
+                <img style="height: 200px;max-width: 100%;" data-src="IMG_SRC" alt="Card image cap">
+              </div>
+              <div class="col-md-9 mb-3">
+                <a href="/seller?seller_id=SHOP_ID" target="_blank"><h5 class="card-title">SHOP_NAME</h5></a>
+                <small class="text-muted">FULL_ADDRESS</small>
+                PRODUCT_LIST
+                <p class="card-text btn btn-sm btn-success book-now" data-shop-id="SHOP_ID">Book Now</p>
+              </div>
+            </div>
+            <hr>
+        </div>
+        <div style="display: none;" id="card_shop_product_table">
+            <div class="row">
+              <div class="col-md-3 mb-3 text-center">
+                <img style="height: 200px;max-width: 100%;" data-src="IMG_SRC" alt="Card image cap">
+              </div>
+              <div class="col-md-9 mb-3">
+                <h5 class="card-title"><input type="checkbox"  class="send_to_seller" data-cart-id="PRICE_ID" checked="false">PRODUCT_NAME</h5>
+                <p class="card-text">PRODUCT_MANUFACTURER</p>
+                <p class="card-text"><span class="btn btn-sm btn-light">CURRENCY SHOP_PRODUCT_PRICE | QTY_TYPE_VALUE</span><span class="btn btn-sm btn-danger">SHOP_PRODUCT_DISCOUNT % Off</span><span class="btn btn-sm btn-light">CURRENCY <del class="text-danger">SHOP_PRODUCT_MSP</del></span></p>
+                <p class="card-text"><span class="btn btn-sm btn-light">CART_QTY QTY</span> <span class="btn btn-sm btn-dark remove-from-cart-shop" data-cart-id="PRICE_ID">Remove</span></p>
+              </div>
+            </div>
+            <hr>
+        </div>
+        <div style="display: none;" id="card_order_shop">
+            <div class="row">
+              <div class="col-md-1 mb-3">
+                <span class="card-title">SR_NO</span>
+              </div>
+              <div class="col-md-3 mb-3">
+                <span class="card-title"><a href="/seller?seller_id=SHOP_ID" target="_blank">SHOP_NAME</a></span>
+                <br>
+                <small class="text-muted">FULL_ADDRESS</small>
+              </div>
+              <div class="col-md-2 mb-3">
+                PRODUCT_COUNT 
+              </div>
+              <div class="col-md-2 mb-3">
+                TOTAL_MONEY
+              </div>
+              <div class="col-md-2 mb-3">
+                CREATED_AT
+              </div>
+              <div class="col-md-2 mb-3">
+                  <a class="order_status" href="order_detail?order_id=ORDER_ID">ORDER_STATUS</a>
+              </div>
+            </div>
+            <hr>
+        </div>
+        <div style="display: none;" id="card_query">
+            <div class="row">
+              <div class="col-md-1 mb-3">
+                <span class="card-title">SR_NO</span>
+              </div>
+              <div class="col-md-3 mb-3">
+                <span class="card-title"><a href="/seller?seller_id=SHOP_ID" target="_blank">SHOP_NAME</a></span>
+              </div>
+              <div class="col-md-3 mb-3">
+                PRODUCT_NAME
+              </div>
+              <div class="col-md-3 mb-3">
+                CREATED_AT
+              </div>
+              <div class="col-md-1 mb-3">
+                  <a class="query_status" href="query_detail?query_id=QUERY_ID">QUERY_STATUS</a>
+              </div>
+            </div>
+            <hr>
+        </div>
+
+<script type="text/javascript">
+  currentOrderPage=1
+  currentQueryPage=1
+  function table_shop(listing){
+    text = ''
+    for (var i = 0; i < listing['cart'].length; i++) {
+      if (typeof listing['cart'][i]['done'] !== 'undefined' && listing['cart'][i]['done']===1) {
+        done = "checked"
+      }else{
+        done = ""
+      }
+      HTML = {
+        'data-src="IMG_SRC"'  : 'src="'+get_img_src(listing['cart'][i]['product'][0]['product_photo'][0]['file_url'])+'"',
+        PRODUCT_NAME          : listing['cart'][i]['product'][0]['product_name'],
+        SHOP_PRODUCT_DISCOUNT : listing['cart'][i]['product_price'][0]['discount_percentage'],
+        CURRENCY              : listing['cart'][i]['product_price'][0]['currency'],
+        SHOP_PRODUCT_PRICE    : toLocaleString(listing['cart'][i]['product_price'][0]['final_amount']),
+        SHOP_PRODUCT_MSP      : toLocaleString(listing['cart'][i]['product_price'][0]['shop_product_msp']),
+        PRICE_ID              : listing['cart'][i]['_id']['$oid'],
+        CART_QTY              : listing['cart'][i]['qty'],
+        'checked="false"'     : done,
+      } 
+      if (listing['cart'][i]['product'][0]['product']) {
+          HTML['QTY_TYPE_VALUE']       = toLocaleString(listing['cart'][i]['product'][0]['product_qty'])+' '+listing['cart'][i]['product'][0]['qty_type'][0]['option_name']
+          HTML['PRODUCT_MANUFACTURER'] = listing['cart'][i]['product'][0]['product_manufacturer']
+      }else{
+          HTML['QTY_TYPE_VALUE']       = ''
+          HTML['PRODUCT_MANUFACTURER'] = ''
+      }
+      text += replace_HTML($('#card_shop_product_table').html(),HTML)
+    }
+    return text
+  }
+ function update_user_order(){
+    custom_AJAX({
+      TYPE:"POST",
+      URL: location.origin+'/api/user_order_list',
+      DATA:{TYPE:"GET_ORDER_LIST",'skip':(globalThis.currentOrderPage-1)*10},
+      SUCCESS:function (response) {
+        // console.log(response)
+        order = response['order']
+        $('.order_product').html('')
+        for (var i = 0; i < order.length; i++) {
+            HTML = {
+              SR_NO                : globalThis.currentOrderPage*10-9+i,
+              'data-src="IMG_SRC"' : 'src="'+get_img_src(order[i]['shop'][0]['photo'])+'"',
+              SHOP_NAME            : order[i]['shop'][0]['shop_name'],
+              TOTAL_MONEY          : toLocaleString(order[i]['total_money']),
+              PRODUCT_COUNT        : order[i]['total_cart'],
+              SHOP_ID              : order[i]['shop'][0]['_id']['$oid'],
+              FULL_ADDRESS         : order[i]['shop'][0]['full_address'],
+              ORDER_STATUS         : order[i]['order_status'][0]['option_name'],
+              CREATED_AT           : get_time(order[i]['created_at']['$date']),
+              ORDER_ID             : order[i]['_id']['$oid'],
+            }
+            $('.order_product').append(replace_HTML($('#card_order_shop').html(),HTML))
+        }
+        $('#order-pagination').pagination({
+          pages: Math.ceil(response.count_order/10),
+          currentPage: globalThis.currentOrderPage,
+          cssStyle: 'light-theme',
+          onPageClick: function (a,b) {
+            globalThis.currentOrderPage = a;
+            update_user_order();
+          }
+        });
+
+      }
+    })
+  }
+ function update_shop_cart(listing){
+    $('.cart_shop').html('')
+    for (var i = 0; i < listing.length; i++) {
+      HTML = {
+        'data-src="IMG_SRC"' : 'src="'+get_img_src(listing[i]['photo'])+'"',
+        SHOP_NAME            : listing[i]['shop_name'],
+        FULL_ADDRESS         : listing[i]['full_address'],
+        SHOP_ID              : listing[i]['_id']['$oid'],
+        PRODUCT_LIST         : '<div class="row">'+table_shop(listing[i])+'</div>'
+      }
+      $('.cart_shop').append(replace_HTML($('#card_shop_table').html(),HTML))
+    }
+  }
+  $(document).on('click','.book-now',function(e,d){
+      data = {TYPE:"BOOK_NOW",shop_id:e.target.attributes['data-shop-id'].nodeValue}
+      custom_AJAX({
+          TYPE:"POST",
+          URL: location.origin+'/api/user_book_now',
+          DATA:data,
+          SUCCESS:function (response) {
+            $('[href="#order"]').click()
+          }
+      })
+  });
+  $(document).on('click','.send_to_seller',function(e,d){
+      data = {TYPE:"SEND_TO_SELLER",cart_id:e.target.attributes['data-cart-id'].nodeValue}
+      // console.log(e.currentTarget)
+      custom_AJAX({
+          TYPE:"POST",
+          URL: location.href,
+          DATA:data,
+          SUCCESS:function (response) {
+            // update_product_cart(response['product'])
+          }
+      })
+  });
+  $(document).on('click','.remove-from-cart-shop',function(e,d){
+      data = {TYPE:"REMOVE_FROM_CART",REFER:"shop",cart_id:e.target.attributes['data-cart-id'].nodeValue}
+      $('[data-cart-id="'+e.target.attributes['data-cart-id'].nodeValue+'"]').closest('.row').remove()
+      custom_AJAX({
+          TYPE:"POST",
+          URL: location.origin+'/api/remove_from_cart',
+          DATA:data,
+          SUCCESS:function (response) {
+          }
+      })
+  });
+  $('[href="#order"]').click(function () {
+    update_user_order()
+  })
+  update_user_order()
+  $('[href="#cart"]').click(function () {
+    custom_AJAX({
+      TYPE:"POST",
+      URL: location.origin+'/api/user_cart_list',
+      DATA:{TYPE:"GET_SHOP_CART"},
+      SUCCESS:function (response) {
+        update_shop_cart(response['shop'])
+      }
+    })
+  })
+  $('[href="#query"]').click(function () {
+    custom_AJAX({
+      TYPE:"POST",
+      URL: location.origin+'/api/user_query_list',
+      DATA:{TYPE:"GET_QUERY_LIST",'skip':(globalThis.currentQueryPage-1)*10},
+      SUCCESS:function (response) {
+        listing = response.query
+        $('.query_seller').html('')
+        for (var i = 0; i < listing.length; i++) {
+          HTML = {
+            SR_NO                : globalThis.currentQueryPage*10-9+i,
+            SHOP_NAME            : listing[i]['shop'][0]['shop_name'],
+            PRODUCT_NAME         : listing[i]['product'][0]['product_name'],
+            QUERY_ID             : listing[i]['_id']['$oid'],
+            SHOP_ID              : listing[i]['shop'][0]['_id']['$oid'],
+            QUERY_STATUS         : listing[i]['query_status'][0]['option_name'],
+            CREATED_AT           : get_time(listing[i]['created_at']['$date']),
+          }
+          $('.query_seller').append(replace_HTML($('#card_query').html(),HTML))
+        }
+        $('#query-pagination').pagination({
+          pages: Math.ceil(response.count_query/10),
+          currentPage: globalThis.currentQueryPage,
+          cssStyle: 'light-theme',
+          onPageClick: function (a,b) {
+            globalThis.currentQueryPage = a;
+            $('[href="#query"]').click()
+          }
+        });
+
+      }
+    })
+  })
+</script>
+{% endblock %}
